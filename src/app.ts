@@ -4,12 +4,22 @@ import { projects } from './mockdata';
 import { tasks } from './mockdata';
 import { users } from './mockdata';
 
+const cors = require('cors');
+
+var corsOptions = {
+  origin: 'http://localhost:8080',
+  optionsSuccessStatus: 200
+}
+
+
+
 
 
 export const getApp = () => {
   const app = express();
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
+  app.use(cors(corsOptions));
 
   app.get('/api/v1/test', (_, res) => {
     res.json({ ok: true });
@@ -39,6 +49,18 @@ export const getApp = () => {
     const id = req.params.id;
     const userId = users.find(user => user.userId == parseInt(id))
     res.send({ userId })
+  });
+
+  app.get('/api/myprojects/:userId',(req,res,next) => {
+    const userId = req.params.userId;
+    const myProjects = projects.filter(project => project.projectTeam.some(user => user.userId == parseInt(userId)));
+    res.send({ myProjects })
+  });
+
+  app.get('/api/exploreprojects/:userId',(req,res,next) => {
+    const userId = req.params.userId;
+    const exploreProjects = projects.filter(project => !project.projectTeam.some(user => user.userId == parseInt(userId)));
+    res.send({ exploreProjects })
   });
 
   app.post('/api/project',(req,res,next) => {
