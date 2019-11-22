@@ -1,94 +1,46 @@
 import express from 'express';
-import bodyParser from 'body-parser';
-import { projects } from './mockdata';
-import { tasks } from './mockdata';
-import { users } from './mockdata';
+import { json, urlencoded } from 'body-parser';
+import cors from 'cors';
 
-const cors = require('cors');
+import {
+  createProject,
+  getProjects,
+  getProject,
+  getUserProjects,
+  getExploreProjects,
+} from './controllers/projectControllers';
+import { getUser, registerUser, editUser, deleteUser } from './controllers/userControllers';
+import { getTasks, getTask, createTask } from './controllers/taskControllers';
 
-var corsOptions = {
+const corsOptions = {
   origin: 'http://localhost:4200',
-  optionsSuccessStatus: 200
-}
-
-
-
-
+  optionsSuccessStatus: 200,
+};
 
 export const getApp = () => {
   const app = express();
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json());
+  app.use(urlencoded({ extended: false }));
+  app.use(json());
   app.use(cors(corsOptions));
 
   app.get('/api/v1/test', (_, res) => {
     res.json({ ok: true });
   });
 
-  app.get('/api/projects',(req,res,next) => {
-    res.send({ projects });
-  });
+  app.get('/api/projects', getProjects);
+  app.get('/api/project/:id', getProject);
+  app.post('/api/project', createProject);
+  app.get('/api/myprojects/:userId', getUserProjects);
+  app.get('/api/exploreprojects/:userId', getExploreProjects);
 
-  app.get('/api/project/:id',(req,res,next) => {
-    const id = req.params.id;
-    const projectId = projects.find(project => project.projectId == parseInt(id))
-    res.send({ projectId })
-  });
+  app.get('/api/tasks', getTasks);
+  app.get('/api/task/:id', getTask);
+  app.post('/api/task', createTask);
 
-  app.get('/api/tasks',(req,res,next) => {
-    res.send({ tasks })
-  });
-
-  app.get('/api/task/:id',(req,res,next) => {
-    const id = req.params.id;
-    const taskId = tasks.filter(task => task.taskId == parseInt(id));
-    res.send({ taskId })
-  })
-
-  app.get('/api/user/:id',(req,res,next) => {
-    const id = req.params.id;
-    const userId = users.find(user => user.userId == parseInt(id))
-    res.send({ userId })
-  });
-
-  app.get('/api/myprojects/:userId',(req,res,next) => {
-    const userId = req.params.userId;
-    const myProjects = projects.filter(project => project.projectTeam.some(user => user.userId == parseInt(userId)));
-    res.send({ myProjects })
-  });
-
-  app.get('/api/exploreprojects/:userId',(req,res,next) => {
-    const userId = req.params.userId;
-    const exploreProjects = projects.filter(project => !project.projectTeam.some(user => user.userId == parseInt(userId)));
-    res.send({ exploreProjects })
-  });
-
-  app.post('/api/project',(req,res,next) => {
-    res.status(201);
-    res.send("POST request to new project page");
-  });
-
-  app.post('/api/register',(req,res,next) => {
-    res.status(201);
-    res.send("POST request to the register page")
-  });
-
-  app.post('/api/task',(req,res,next) => {
-    res.status(201);
-    res.send("POST request to new task");
-  });
-
-  app.put('/api/user/:id/edit',(req,res,next) => {
-    const id = req.params.id;
-    res.send("PUT request to the userID " + id);
-  });
-
-  app.put('/api/task/:id/delete',(req,res,next) => {
-    const id = req.params.id
-    res.send("PUT request to taskId" + id);
-  });
-  
+  app.get('/api/user/:id', getUser);
+  app.post('/api/register', registerUser);
+  app.put('/api/user/:id', editUser);
+  app.delete('/api/task/:id', deleteUser);
 
   return app;
 };
-
