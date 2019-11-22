@@ -7,7 +7,7 @@ import { users } from './mockdata';
 const cors = require('cors');
 
 var corsOptions = {
-  origin: 'http://localhost:8080',
+  origin: 'http://localhost:4200',
   optionsSuccessStatus: 200
 }
 
