@@ -11,5 +11,21 @@
     "javascriptreact",
     { "language": "typescript", "autoFix": true },
     { "language": "typescriptreact", "autoFix": true }
-  ]
+  ],
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#ddf4c7",
+    "activityBar.activeBorder": "#5f9ee0",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#5f9ee0",
+    "activityBarBadge.foreground": "#15202b",
+    "titleBar.activeBackground": "#c3eb9d",
+    "titleBar.inactiveBackground": "#c3eb9d99",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveForeground": "#15202b99",
+    "statusBar.background": "#c3eb9d",
+    "statusBarItem.hoverBackground": "#a9e273",
+    "statusBar.foreground": "#15202b"
+  },
+  "peacock.color": "#c3eb9d"
 }
