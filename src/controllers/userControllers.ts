@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 
-import { users } from '../mockdata';
+import { users } from "../mockdata";
 
 export const getUser = (req: Request, res: Response) => {
   const id = req.params.id;
@@ -10,15 +10,15 @@ export const getUser = (req: Request, res: Response) => {
 
 export const registerUser = (req: Request, res: Response) => {
   res.status(201);
-  res.send('POST request to the register page');
+  res.send("POST request to the register page");
 };
 
 export const editUser = (req: Request, res: Response) => {
   const id = req.params.id;
-  res.send('PUT request to the userID ' + id);
+  res.send("PUT request to the userID " + id);
 };
 
 export const deleteUser = (req: Request, res: Response) => {
   const id = req.params.id;
-  res.send('PUT request to taskId' + id);
+  res.send("PUT request to taskId" + id);
 };

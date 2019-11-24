@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "nodemon node -r ./tsconfig-paths-bootstrap.js .",
+    "start": "NODE_ENV=production nodemon node -r ./tsconfig-paths-bootstrap.js .",
     "start:dev": "node -r dotenv/config -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
     "dev": "nodemon",
     "test:unit": "mocha --recursive -r tsconfig-paths/register -r ts-node/register -r source-map-support/register src/**/*.spec.ts",
@@ -37,9 +37,12 @@
   },
   "homepage": "https://github.com/codecampleipzig/backend#readme",
   "dependencies": {
+    "@types/pg": "^7.11.2",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "pg": "^7.14.0",
+    "pg-camelcase": "0.0.3"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.1",
@@ -59,6 +62,7 @@
     "eslint-plugin-prettier": "^3.1.1",
     "mocha": "^6.2.2",
     "nodemon": "^1.19.4",
+    "pg-testdb": "^1.0.4",
     "prettier": "^1.19.1",
     "supertest": "^4.0.2",
     "ts-node": "^8.5.0",

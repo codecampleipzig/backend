@@ -1,5 +1,5 @@
-import { PORT } from 'src/configuration';
-import { getApp } from 'src/app';
+import { PORT } from "src/configuration";
+import { getApp } from "src/app";
 const startServer = () => {
   try {
     const app = getApp();

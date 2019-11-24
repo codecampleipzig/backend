@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 
-import { tasks } from '../mockdata';
+import { tasks } from "../mockdata";
 
 export const getTasks = (req: Request, res: Response) => {
   res.send({ tasks });
@@ -14,5 +14,5 @@ export const getTask = (req: Request, res: Response) => {
 
 export const createTask = (req: Request, res: Response) => {
   res.status(201);
-  res.send('POST request to new task');
+  res.send("POST request to new task");
 };
