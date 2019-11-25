@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "NODE_ENV=production nodemon node -r ./tsconfig-paths-bootstrap.js .",
+    "start": "NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js .",
     "start:dev": "node -r dotenv/config -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
     "dev": "nodemon",
     "test:unit": "jest",
@@ -42,7 +42,8 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "pg": "^7.14.0",
-    "pg-camelcase": "0.0.3"
+    "pg-camelcase": "0.0.3",
+    "tsconfig-paths": "^3.9.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.1",
@@ -54,18 +55,17 @@
     "@types/supertest": "^2.0.8",
     "@typescript-eslint/eslint-plugin": "^2.6.1",
     "@typescript-eslint/parser": "^2.6.1",
-    "dotenv": "^8.2.0",
     "eslint": "^6.6.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-prettier": "^3.1.1",
     "jest": "^24.9.0",
-    "nodemon": "^1.19.4",
     "pg-testdb": "^1.0.4",
     "prettier": "^1.19.1",
     "supertest": "^4.0.2",
     "ts-jest": "^24.2.0",
+    "nodemon": "^1.19.4",
     "ts-node": "^8.5.0",
-    "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.2",
+    "dotenv": "^8.2.0"
   }
 }
