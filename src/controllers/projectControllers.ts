@@ -51,8 +51,9 @@ export const getUserProjects = async (req: Request, res: Response, next: NextFun
     const id = req.params.userId;
     const dbResponse = await query(
       `SELECT projects.project_id, project_title, project_description, project_image_url, project_goal, project_creator, project_status FROM projects
-      LEFT JOIN user_project ON user_project.project_id = projects.project_id
-      WHERE user_project.user_id = $1 OR projects.project_creator = $1`,
+      WHERE EXISTS 
+        (SELECT * from user_project
+        WHERE project_id = projects.project_id AND user_id = $1)`,
       [id],
     );
     res.send({ projects: dbResponse.rows });
@@ -66,8 +67,9 @@ export const getExploreProjects = async (req: Request, res: Response, next: Next
     const id = req.params.userId;
     const dbResponse = await query(
       `SELECT projects.project_id, project_title, project_description, project_image_url, project_goal, project_creator, project_status FROM projects
-      LEFT JOIN user_project ON user_project.project_id = projects.project_id
-      WHERE (user_project.user_id != $1 AND projects.project_creator != $1) OR user_project.user_id IS NULL`,
+      WHERE NOT EXISTS 
+        (SELECT * from user_project
+        WHERE project_id = projects.project_id AND user_id = $1)`,
       [id],
     );
     res.send({ projects: dbResponse.rows });
