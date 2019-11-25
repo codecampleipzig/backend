@@ -1,14 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-
-import pg from "pg";
-import pgCamelCase from "pg-camelcase";
-
-pgCamelCase.inject(pg);
-const pgPool = new pg.Pool();
+import { query } from "../db";
 
 export const getProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const dbResponse = await pgPool.query("SELECT * from projects");
+    const dbResponse = await query("SELECT * from projects");
     res.send({ projects: dbResponse.rows });
   } catch (error) {
     next(error);
@@ -17,7 +12,7 @@ export const getProjects = async (req: Request, res: Response, next: NextFunctio
 
 export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const dbResponse = await pgPool.query("SELECT * from projects WHERE projectId = $1", [req.params.id]);
+    const dbResponse = await query("SELECT * from projects WHERE projectId = $1", [req.params.id]);
     if (dbResponse.rows.length == 1) {
       res.send({ project: dbResponse.rows[0] });
     } else {
@@ -41,7 +36,7 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
       throw new Error("Not a valid project");
     }
 
-    await pgPool.query(
+    await query(
       "INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) VALUES($1, $2, $3, $4, $5)",
       [title, description, imageURL, goal, creator],
     );
@@ -54,7 +49,7 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
 export const getUserProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.userId;
-    const dbResponse = await pgPool.query(
+    const dbResponse = await query(
       `SELECT projects.project_id, project_title, project_description, project_image_url, project_goal, project_creator, project_status FROM projects
       LEFT JOIN user_project ON user_project.project_id = projects.project_id
       WHERE user_project.user_id = $1 OR projects.project_creator = $1`,
@@ -69,7 +64,7 @@ export const getUserProjects = async (req: Request, res: Response, next: NextFun
 export const getExploreProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.userId;
-    const dbResponse = await pgPool.query(
+    const dbResponse = await query(
       `SELECT projects.project_id, project_title, project_description, project_image_url, project_goal, project_creator, project_status FROM projects
       LEFT JOIN user_project ON user_project.project_id = projects.project_id
       WHERE (user_project.user_id != $1 AND projects.project_creator != $1) OR user_project.user_id IS NULL`,
