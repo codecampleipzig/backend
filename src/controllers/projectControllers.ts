@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 
 import pg from "pg";
 import pgCamelCase from "pg-camelcase";
-import { projects } from "../mockdata";
 
 pgCamelCase.inject(pg);
 const pgPool = new pg.Pool();
