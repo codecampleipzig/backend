@@ -1,8 +1,8 @@
 import { PORT } from "src/configuration";
 import { getApp } from "src/app";
-const startServer = () => {
+const startServer = async () => {
   try {
-    const app = getApp();
+    const app = await getApp();
     app.listen(PORT, () => {
       console.log(`server started at http://localhost:${PORT}`);
     });

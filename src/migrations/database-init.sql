@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS projects (
   project_image_url varchar NOT NULL,
   project_description varchar NOT NULL,
   project_goal varchar NOT NULL,
-  project_status varchar NOT NULL DEFAULT 'open' AS ENUM ('open', 'done', 'deleted'),
+  project_status varchar NOT NULL DEFAULT 'open',
   project_creator integer REFERENCES users(user_id) NOT NULL
 );
 
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   project_id integer REFERENCES projects(project_id) NOT NULL,
   task_title varchar NOT NULL,
   task_description varchar,
-  task_status varchar NOT NULL DEFAULT 'open' AS ENUM ('open', 'done', 'deleted'),
+  task_status varchar NOT NULL DEFAULT 'open',
   task_creator integer REFERENCES users(user_id) NOT NULL,
   task_init_date timestamp NOT NULL DEFAULT NOW(),
   task_closed_by integer REFERENCES users(user_id),
