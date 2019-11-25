@@ -14,16 +14,11 @@ import { getUser, registerUser, editUser, deleteUser } from "./controllers/userC
 import { getTasks, getTask, createTask } from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 
-const corsOptions = {
-  origin: "http://localhost:4200",
-  optionsSuccessStatus: 200,
-};
-
 export const getApp = async () => {
   const app = express();
   app.use(urlencoded({ extended: false }));
   app.use(json());
-  app.use(cors(corsOptions));
+  app.use(cors());
 
   app.get("/api/test", (_, res) => {
     res.json({ ok: true });
