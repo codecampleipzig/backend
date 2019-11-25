@@ -35,17 +35,19 @@ CREATE TABLE users (
 	leave_date date
 )
 
-CREATE TABLE user_task (
-	user_task_id serial NOT NULL PRIMARY KEY,
-	user_id integer NOT NULL,
-	task_id integer NOT NULL
+CREATE TABLE project_user (
+	project_id integer REFERENCES projects,
+	user_id integer REFERENCES users,
+	PRIMARY KEY (user_id, project_id)
 )
 
-CREATE TABLE user_project (
-	user_project_id serial NOT NULL PRIMARY KEY,
-	user_id integer NOT NULL,
-	project_id integer NOT NULL
+CREATE TABLE task_user (
+	task_id integer REFERENCES tasks,
+	user_id integer REFERENCES users,
+	PRIMARY KEY (user_id, task_id)
 )
+
+
 
 INSERT INTO projects (project_title, project_image_url, project_description, project_goal, project_status, project_creator, project_team, project_tasks)
 VALUES ('Plan the graduation', './../assets/project-default.png', 'Plan the gradtuation party for the first code campers leipzig. Book amazing DJS and food and drinks that makes everyone happy. Also have a very nice venue and lets have the best evening ever!!!', 'Plan the best Party ever', 'open', '12', '{2, 3, 6, 8, 9, 10, 12}', '{1, 2, 3}')
@@ -128,5 +130,13 @@ VALUES ('Valeria', 'iDesignYourBeautifulWebsite@gmail.com', '../assets/user_avat
 INSERT INTO users (user_name, user_email, user_image_url, join_date)
 VALUES ('Dan', 'theDarkPrince@gmail.com', '../assets/user_avatar.png', current_date)
 
+INSERT INTO project_user (user_id,project_id)
+SELECT user_id,project_id
+FROM users U, projects P
+WHERE U.user_id  = ANY (P.project_team)
 
+INSERT INTO task_user (user_id,task_id)
+SELECT user_id,task_id
+FROM users U, task T
+WHERE U.user_id  = ANY (T.task_team)
 
