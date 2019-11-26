@@ -1,14 +1,38 @@
 import { Request, Response, NextFunction } from "express";
 import { query } from "../db";
+import { QueryResult } from "pg";
+import { Project } from "src/datatypes/Project";
 
 export const getProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const dbResponse = await query("SELECT * from projects");
+    const searchTermQueryParam = req.query.searchTerm;
+
+    if (Array.isArray(searchTermQueryParam)) {
+      res.status(400).send({ message: "Only one search term parameter allowed" });
+    }
+    var dbResponse: QueryResult<Project> = await searchForProjects(searchTermQueryParam);
     res.send({ projects: dbResponse.rows });
   } catch (error) {
     next(error);
   }
 };
+
+async function searchForProjects(searchTermQueryParam: any) {
+  var dbResponse: QueryResult<Project>;
+  if (!searchTermQueryParam) {
+    dbResponse = await query("SELECT * from projects");
+  }
+  else {
+    const searchTerm = calculateSqlParamValue();
+    dbResponse = await query("SELECT * from projects WHERE LOWER(project_title) LIKE $1", [searchTerm]);
+  }
+  return dbResponse;
+
+  function calculateSqlParamValue() {
+    return `%${searchTermQueryParam}%`.toLowerCase();
+  }
+}
+
 
 export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -77,3 +101,4 @@ export const getExploreProjects = async (req: Request, res: Response, next: Next
     next(error);
   }
 };
+

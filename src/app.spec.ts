@@ -18,4 +18,23 @@ describe("/api/projects", () => {
     expect(res.body.projects).toBeTruthy();
     expect(res.body.projects.length).toBeGreaterThan(0);
   });
+  it("Returns searched projects", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/projects?searchTerm=plan");
+    expect(res.body.projects).toBeTruthy();
+    expect(res.body.projects.length).toBe(2);
+  });
+  it("Returns searched projects", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/projects?searchTerm=Plan");
+    expect(res.body.projects).toBeTruthy();
+    expect(res.body.projects.length).toBe(2);
+  });
+  it("Returns searched projects", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/projects?searchTerm=Plan&searchTerm=Plan");
+    expect(res.body.projects).toBeFalsy();
+    expect(res.status).toBe(400);
+  });
+  
 });
