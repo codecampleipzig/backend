@@ -23,10 +23,10 @@ export const deleteTask = async (req: Request, res: Response, next: NextFunction
     const {project_id, task_id} = req.params;
     const dbResponse = await query (
       `DELETE FROM task 
-      WHERE task.project_id = $1`,
-      [project_id]
+      WHERE task.task_id = $1 AND task.project_id = $2`,
+      [task_id, project_id]
     );
-    res.send({ project_id});
+    res.send({task_id, project_id});
   }catch (error) {
     next(error);
   }
@@ -48,13 +48,13 @@ export const addTaskMember = async (req: Request, res: Response, next: NextFunct
 
 export const deleteTaskMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {project_id, user_id} = req.params;
+    const {task_id, user_id} = req.params;
     const dbResponse = await query (
-      `DELETE FROM user_project 
-      WHERE user_project.project_id = $1 AND user_project.user_id = $2`,
-      [project_id, user_id]
+      `DELETE FROM user_task 
+      WHERE user_task.task_id = $1 AND user_task.user_id = $2`,
+      [task_id, user_id]
     );
-    res.send({ project_id, user_id});
+    res.send({ task_id, user_id});
   }catch (error) {
     next(error);
   }
