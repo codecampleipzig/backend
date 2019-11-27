@@ -18,6 +18,9 @@ CREATE TABLE IF NOT EXISTS projects (
   project_creator integer REFERENCES users(user_id) NOT NULL
 );
 
+CREATE INDEX IF NOT EXISTS 
+  projects_lower_project_title_idx ON projects (lower(project_title));
+
 CREATE TABLE IF NOT EXISTS tasks (
   task_id serial NOT NULL PRIMARY KEY,
   project_id integer REFERENCES projects(project_id) NOT NULL,
@@ -44,3 +47,4 @@ CREATE TABLE IF NOT EXISTS user_project (
   user_id integer REFERENCES users(user_id) NOT NULL,
   project_id integer REFERENCES projects(project_id) NOT NULL
 );
+
