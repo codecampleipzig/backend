@@ -6,7 +6,6 @@ import { Project } from "src/datatypes/Project";
 export const getProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const searchTermQueryParam = req.query.searchTerm;
-
     if (Array.isArray(searchTermQueryParam)) {
       res.status(400).send({ message: "Only one search term parameter allowed" });
     }
@@ -17,19 +16,32 @@ export const getProjects = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-async function searchForProjects(searchTermQueryParam: any) {
+async function searchForProjects(searchTermQueryParam: string) {
   var dbResponse: QueryResult<Project>;
   if (!searchTermQueryParam) {
     dbResponse = await query("SELECT * from projects");
   }
   else {
-    const searchTerm = calculateSqlParamValue();
-    dbResponse = await query("SELECT * from projects WHERE LOWER(project_title) LIKE $1", [searchTerm]);
+    const searchTermQueryParamToArray = searchTermQueryParam.split(" ");
+
+    let queryString = "SELECT * from projects";
+    for (let i = 0; i < searchTermQueryParamToArray.length; i++) {
+      let queryCondition;
+      if (i == 0) {
+        queryCondition = ` WHERE LOWER(project_title) LIKE $${i + 1}`
+      } else {
+        queryCondition = ` AND LOWER(project_title) LIKE $${i + 1}`
+      }
+      queryString = queryString + queryCondition;
+      searchTermQueryParamToArray[i] = calculateSqlParamValue(searchTermQueryParamToArray[i]);
+    }
+
+    dbResponse = await query(queryString, searchTermQueryParamToArray);
   }
   return dbResponse;
 
-  function calculateSqlParamValue() {
-    return `%${searchTermQueryParam}%`.toLowerCase();
+  function calculateSqlParamValue(param: string) {
+    return `%${param}%`.toLowerCase();
   }
 }
 
@@ -101,4 +113,8 @@ export const getExploreProjects = async (req: Request, res: Response, next: Next
     next(error);
   }
 };
+
+
+
+
 
