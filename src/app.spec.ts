@@ -48,6 +48,37 @@ describe("/api/projects", () => {
     expect(res.body.projects).toBeTruthy();
     expect(res.body.projects.length).toBe(1);
   });
+  it("Returns searched projects - limit 1 offset 1 returns 1 result", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/projects?searchTerm=Plan&limit=1&offset=1");
+    expect(res.body.projects).toBeTruthy();
+    expect(res.body.projects.length).toBe(1);
+  });
+  it("Returns searched projects - limit -1 offset 1 returns bad request result", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/projects?searchTerm=Plan&limit=-1&offset=1");
+    expect(res.body.projects).toBeFalsy();
+    expect(res.status).toBe(400);
+  });
+  it("Returns searched projects - limit 1 offset -1 returns bad request result", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/projects?searchTerm=Plan&limit=1&offset=-1");
+    expect(res.body.projects).toBeFalsy();
+    expect(res.status).toBe(400);
+  });
+  it("Returns searched projects - limit a offset 1 returns bad request result", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/projects?searchTerm=Plan&limit=a&offset=1");
+    expect(res.body.projects).toBeFalsy();
+    expect(res.status).toBe(400);
+  });
+  it("Returns searched projects - limit 1 offset a returns bad request result", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/projects?searchTerm=Plan&limit=1&offset=a");
+    expect(res.body.projects).toBeFalsy();
+    expect(res.status).toBe(400);
+  });
+  
   
   
 });
