@@ -77,3 +77,34 @@ export const getExploreProjects = async (req: Request, res: Response, next: Next
     next(error);
   }
 };
+
+export const addTeamMember = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {project_id, user_id} = req.params;
+    const dbResponse = await query (
+      `INSERT INTO user_project (project_id, user_id) 
+      VALUES ($1, $2) RETURNING *`, 
+      [project_id, user_id]
+    );
+    res.send({ project_id, user_id});
+  }catch (error) {
+    next(error);
+  }
+};
+
+export const deleteTeamMember = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {project_id, user_id} = req.params;
+    const dbResponse = await query (
+      `DELETE FROM user_project 
+      WHERE user_project.project_id = $1 AND user_project.user_id = $2`,
+      [project_id, user_id]
+    );
+    res.send({ project_id, user_id});
+  }catch (error) {
+    next(error);
+  }
+};
+
+
+

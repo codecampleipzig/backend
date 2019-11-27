@@ -9,9 +9,11 @@ import {
   getProject,
   getUserProjects,
   getExploreProjects,
+  addTeamMember,
+  deleteTeamMember,
 } from "./controllers/projectControllers";
 import { getUser, registerUser, editUser, deleteUser } from "./controllers/userControllers";
-import { getTasks, getTask, createTask } from "./controllers/taskControllers";
+import { getTasks, getTask, createTask, deleteTask, addTaskMember, deleteTaskMember } from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 
 export const getApp = async () => {
@@ -29,10 +31,16 @@ export const getApp = async () => {
   app.post("/api/project", createProject);
   app.get("/api/myprojects/:userId", getUserProjects);
   app.get("/api/exploreprojects/:userId", getExploreProjects);
+  app.post("/api/projectTeam/:projectId/member/:userId", addTeamMember);
+  app.post("/api/projectTeam/:projectId/member/:userId", deleteTeamMember);
+
 
   app.get("/api/tasks", getTasks);
   app.get("/api/task/:id", getTask);
   app.post("/api/task", createTask);
+  app.post("/api/projectTask/:projectId/task/:taskId", deleteTask);
+  app.post("/api/taskTeam/:taskId/member/:userId", addTaskMember);
+  app.post("/api/taskTeam/:taskId/member/:userId", deleteTaskMember);
 
   app.get("/api/user/:id", getUser);
   app.post("/api/register", registerUser);
