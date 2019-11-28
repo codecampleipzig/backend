@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { query } from "../db";
 
-import { tasks } from "../mockdata";
-
 export const getTasks = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const dbResponse = await query("SELECT * from tasks");
@@ -18,7 +16,7 @@ export const getTask = async (req: Request, res: Response, next: NextFunction) =
     if (dbResponse.rows.length == 1) {
       res.send({ project: dbResponse.rows[0] });
     } else {
-      res.status(404).send({ error: "Project not found" });
+      res.status(404).send({ error: "Task not found" });
     }
   } catch (error) {
     next(error);
