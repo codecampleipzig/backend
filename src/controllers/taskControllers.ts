@@ -3,7 +3,7 @@ import { query } from "../db";
 
 export const getTasks = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const dbResponse = await query("SELECT * from tasks");
+    const dbResponse = await query(`SELECT * from tasks`);
     res.send({ tasks: dbResponse.rows });
   } catch (error) {
     next(error);
@@ -12,7 +12,7 @@ export const getTasks = async (req: Request, res: Response, next: NextFunction) 
 
 export const getTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const dbResponse = await query("SELECT * from tasks WHERE task_id = $1", [req.params.id]);
+    const dbResponse = await query(`SELECT * from tasks WHERE task_id = $1`, [req.params.id]);
     if (dbResponse.rows.length == 1) {
       res.send({ project: dbResponse.rows[0] });
     } else {
@@ -38,7 +38,8 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
     }
 
     await query(
-      "INSERT INTO tasks(task_title, task_description, task_image_url, task_goal, task_creator) VALUES($1, $2, $3, $4, $5, $6)",
+      `INSERT INTO tasks(task_title, task_description, task_image_url, task_goal, task_creator) 
+      VALUES($1, $2, $3, $4, $5, $6)`,
       [title, imageURL, description, goal, status, creator],
     );
     res.status(201).send({ status: "ok" });
@@ -95,7 +96,7 @@ export const deleteTaskMember = async (req: Request, res: Response, next: NextFu
     const {task_id, user_id} = req.params;
     const dbResponse = await query (
       `DELETE FROM user_task 
-      WHERE user_task.task_id = $1 AND user_task.user_id = $2`,
+      WHERE user_task.task_id = $1 AND user_task.user_id = $2 RETURNING user_id`,
       [task_id, user_id]
     );
     res.send({ task_id, user_id});

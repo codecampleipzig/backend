@@ -12,7 +12,7 @@ export const getProjects = async (req: Request, res: Response, next: NextFunctio
 
 export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const dbResponse = await query("SELECT * from projects WHERE project_id = $1", [req.params.id]);
+    const dbResponse = await query(`SELECT * from projects WHERE project_id = $1`, [req.params.id]);
     if (dbResponse.rows.length == 1) {
       res.send({ project: dbResponse.rows[0] });
     } else {
@@ -37,7 +37,8 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
     }
 
     await query(
-      "INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) VALUES($1, $2, $3, $4, $5)",
+      `INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) 
+      VALUES($1, $2, $3, $4, $5) RETURNING *`,
       [title, description, imageURL, goal, creator],
     );
     res.status(201).send({ status: "ok" });
@@ -84,7 +85,7 @@ export const getProjectTeam = async (req: Request, res: Response, next: NextFunc
     const dbResponse = await query(
       `SELECT project.project_id, user.user_id, user.user_name, user.user_mail, user_image_url FROM users
       JOIN project_user on project_user.user_id = user.user_id
-      JOIN project on project_user.project_id = $1`,
+      JOIN project on project_user.project_id = $1 RETURNING *`,
       [project_id],
     );
     res.send({ projects: dbResponse.rows });
@@ -112,7 +113,7 @@ export const deleteTeamMember = async (req: Request, res: Response, next: NextFu
     const {project_id, user_id} = req.params;
     const dbResponse = await query (
       `DELETE FROM user_project 
-      WHERE user_project.project_id = $1 AND user_project.user_id = $2`,
+      WHERE user_project.project_id = $1 AND user_project.user_id = $2 RETURNING user_id`,
       [project_id, user_id]
     );
     res.send({ project_id, user_id});
