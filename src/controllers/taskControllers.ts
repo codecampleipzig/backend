@@ -32,6 +32,21 @@ export const deleteTask = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+export const getTaskTeam = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const task_id = req.params.taskId;
+    const dbResponse = await query(
+      `SELECT task.task_id, user.user_id, user.user_name, user.user_mail, user_image_url FROM users
+      JOIN task_user on task_user.user_id = user.user_id
+      JOIN task on task_user.task_id = $1`,
+      [task_id],
+    );
+    res.send({ projects: dbResponse.rows });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const addTaskMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {task_id, user_id} = req.params;

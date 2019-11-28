@@ -78,6 +78,21 @@ export const getExploreProjects = async (req: Request, res: Response, next: Next
   }
 };
 
+export const getProjectTeam = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const project_id = req.params.projectId;
+    const dbResponse = await query(
+      `SELECT project.project_id, user.user_id, user.user_name, user.user_mail, user_image_url FROM users
+      JOIN project_user on project_user.user_id = user.user_id
+      JOIN project on project_user.project_id = $1`,
+      [project_id],
+    );
+    res.send({ projects: dbResponse.rows });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const addTeamMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {project_id, user_id} = req.params;
