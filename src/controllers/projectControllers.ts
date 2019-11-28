@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { query } from "../db";
 import { QueryResult } from "pg";
 import { Project } from "src/datatypes/Project";
+import { labeledStatement } from "@babel/types";
 
 export const getProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -69,9 +70,46 @@ async function searchForProjects(searchTermQueryParam: string, limit: number, of
 
 export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const dbResponse = await query("SELECT * from projects WHERE projectId = $1", [req.params.id]);
-    if (dbResponse.rows.length == 1) {
-      res.send({ project: dbResponse.rows[0] });
+    // Get Project
+    const project = await query("SELECT * from projects WHERE project_id = $1", [req.params.id]);
+
+    // Get Project Creator and replace it in project
+    const projectCreatorId = project.rows[0].projectCreator;
+    const projectCreator = await query("SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from users u WHERE user_id = $1", [projectCreatorId]);
+    project.rows[0].projectCreator = projectCreator.rows[0];
+
+    // Get project Team and append to project
+    const projectTeam = await query(
+      `SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from user_project up 
+      JOIN users u ON up.user_id = u.user_id
+      WHERE up.project_id = $1`,
+      [req.params.id]
+    );
+    project.rows[0].projectTeam = projectTeam.rows;
+
+    // Get Tasks and tasksTeams and append to project
+    const tasks = await query(`SELECT * from tasks WHERE project_id = $1`, [req.params.id])
+    // Create empty array in every task
+    for (let i = 0; i < tasks.rows.length; i++) {
+      tasks.rows[i].taskTeam = [];
+    }
+    const tasksTeams = await query(
+      `SELECT t.task_id, u.user_id, u.user_name, u.user_email, u.user_image_url from tasks t
+      JOIN user_task ut ON t.task_id = ut.task_id
+      JOIN users u ON u.user_id = ut.user_id
+      WHERE project_id = $1`,
+      [req.params.id]
+    )
+    // Loop through tasks and put every user by task into projectTasks
+    tasksTeams.rows.forEach(element => {
+      const {taskId} = element;
+      delete element.taskId;
+      tasks.rows.find(t => t.taskId == taskId).taskTeam.push(element);
+    });
+    project.rows[0].projectTasks = tasks.rows;
+
+    if (project.rows.length == 1) {
+      res.send({ project: project.rows[0] });
     } else {
       res.status(404).send({ error: "Project not found" });
     }
