@@ -12,6 +12,7 @@ import {
   addTeamMember,
   deleteTeamMember,
   getProjectTeam,
+  getProjectTasks,
 } from "./controllers/projectControllers";
 import { getUser, registerUser, editUser, deleteUser } from "./controllers/userControllers";
 import { getTasks, getTask, createTask, deleteTask, getTaskTeam, addTaskMember, deleteTaskMember } from "./controllers/taskControllers";
@@ -35,6 +36,7 @@ export const getApp = async () => {
   app.get("/api/project/:project_id/member", getProjectTeam);
   app.post("/api/projectTeam/:projectId/member/:userId", addTeamMember);
   app.post("/api/projectTeam/:projectId/member/:userId", deleteTeamMember);
+  app.post("/api/project/:projectId/tasks", getProjectTasks);
 
 
   app.get("/api/tasks", getTasks);

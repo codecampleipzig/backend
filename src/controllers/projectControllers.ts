@@ -121,5 +121,16 @@ export const deleteTeamMember = async (req: Request, res: Response, next: NextFu
   }
 };
 
-
-
+export const getProjectTasks = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const project_id = req.params.projectId;
+    const dbResponse = await query(
+      `SELECT project.project_id, task_title, task_description, task_status, task_creator, task_init_date, menu_section FROM tasks
+      JOIN project on project.project_id = $1`,
+      [project_id],
+    );
+    res.send({ tasks: dbResponse.rows });
+  } catch (error) {
+    next(error);
+  }
+};

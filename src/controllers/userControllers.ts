@@ -29,7 +29,8 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     }
 
     await query(
-      `INSERT INTO users(user_name, user_email, password, user_image_url, join_date) VALUES($1, $2, $3, $4, $5)`,
+      `INSERT INTO users(user_name, user_email, password, user_image_url, join_date) 
+      VALUES($1, $2, $3, $4, $5) RETURNING *`,
       [name, email, password, imageURL, joinDate],
     );
     res.status(201).send({ status: "ok" });
