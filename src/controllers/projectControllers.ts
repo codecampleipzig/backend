@@ -7,7 +7,7 @@ export const getProjects = async (req: Request, res: Response, next: NextFunctio
   try {
     const searchTermQueryParam = req.query.searchTerm;
     if (Array.isArray(searchTermQueryParam)) {
-      res.status(400).send({ message: "Only one search term parameter allowed" });
+      return res.status(400).send({ message: "Only one search term parameter allowed" });
     }
     let limitParam = req.query.limit;
     let offsetParam = req.query.offset;
@@ -21,13 +21,13 @@ export const getProjects = async (req: Request, res: Response, next: NextFunctio
     const limitParamNum = parseInt(limitParam);
     const offsetParamNum = parseInt(offsetParam);
 
-    if (Number.isNaN(limitParamNum) || limitParamNum < 0){
-      res.status(400).send({message: "Limit has to be a non-negative number"})
+    if (Number.isNaN(limitParamNum) || limitParamNum < 0) {
+      return res.status(400).send({ message: "Limit has to be a non-negative number" });
     }
-    if (Number.isNaN(offsetParamNum) || offsetParamNum < 0){
-      res.status(400).send({message: "Offset has to be a non-negative number"})
+    if (Number.isNaN(offsetParamNum) || offsetParamNum < 0) {
+      return res.status(400).send({ message: "Offset has to be a non-negative number" });
     }
-   
+
     var dbResponse: QueryResult<Project> = await searchForProjects(searchTermQueryParam, limitParamNum, offsetParamNum);
     res.send({ projects: dbResponse.rows });
   } catch (error) {
@@ -39,18 +39,16 @@ async function searchForProjects(searchTermQueryParam: string, limit: number, of
   var dbResponse: QueryResult<Project>;
   if (!searchTermQueryParam) {
     dbResponse = await query("SELECT * from projects");
-
-  }
-  else {
+  } else {
     const searchTermQueryParamToArray = searchTermQueryParam.split(" ");
 
     let queryString = "SELECT * from projects";
     for (let i = 0; i < searchTermQueryParamToArray.length; i++) {
       let queryCondition;
       if (i == 0) {
-        queryCondition = ` WHERE LOWER(project_title) LIKE $${i + 1}`
+        queryCondition = ` WHERE LOWER(project_title) LIKE $${i + 1}`;
       } else {
-        queryCondition = ` AND LOWER(project_title) LIKE $${i + 1}`
+        queryCondition = ` AND LOWER(project_title) LIKE $${i + 1}`;
       }
       queryString = queryString + queryCondition;
       searchTermQueryParamToArray[i] = calculateSqlParamValue(searchTermQueryParamToArray[i]);
@@ -68,7 +66,6 @@ async function searchForProjects(searchTermQueryParam: string, limit: number, of
     return `LIMIT ${limit} OFFSET ${offset}`;
   }
 }
-
 
 export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -137,8 +134,3 @@ export const getExploreProjects = async (req: Request, res: Response, next: Next
     next(error);
   }
 };
-
-
-
-
-
