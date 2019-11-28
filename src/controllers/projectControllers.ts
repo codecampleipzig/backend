@@ -12,7 +12,7 @@ export const getProjects = async (req: Request, res: Response, next: NextFunctio
 
 export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const dbResponse = await query("SELECT * from projects WHERE projectId = $1", [req.params.id]);
+    const dbResponse = await query("SELECT * from projects WHERE project_id = $1", [req.params.id]);
     if (dbResponse.rows.length == 1) {
       res.send({ project: dbResponse.rows[0] });
     } else {

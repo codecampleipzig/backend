@@ -3,19 +3,50 @@ import { query } from "../db";
 
 import { tasks } from "../mockdata";
 
-export const getTasks = (req: Request, res: Response) => {
-  res.send({ tasks });
+export const getTasks = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const dbResponse = await query("SELECT * from tasks");
+    res.send({ tasks: dbResponse.rows });
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const getTask = (req: Request, res: Response) => {
-  const id = req.params.id;
-  const taskId = tasks.filter(task => task.taskId == parseInt(id));
-  res.send({ taskId });
+export const getTask = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const dbResponse = await query("SELECT * from tasks WHERE task_id = $1", [req.params.id]);
+    if (dbResponse.rows.length == 1) {
+      res.send({ project: dbResponse.rows[0] });
+    } else {
+      res.status(404).send({ error: "Project not found" });
+    }
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const createTask = (req: Request, res: Response) => {
-  res.status(201);
-  res.send("POST request to new task");
+export const createTask = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const body = req.body;
+    const title = body.projectTitle;
+    const imageURL = body.projectImageURL;
+    const description = body.projectDescription;
+    const goal = body.projectGoal;
+    const status = body.taskStatus;
+    const creator = parseInt(body.projectCreator);
+
+    if (!title || !imageURL || !description || !goal || !status || Number.isNaN(creator)) {
+      throw new Error("Not a valid task");
+    }
+
+    await query(
+      "INSERT INTO tasks(task_title, task_description, task_image_url, task_goal, task_creator) VALUES($1, $2, $3, $4, $5, $6)",
+      [title, imageURL, description, goal, status, creator],
+    );
+    res.status(201).send({ status: "ok" });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
@@ -41,7 +72,7 @@ export const getTaskTeam = async (req: Request, res: Response, next: NextFunctio
       JOIN task on task_user.task_id = $1`,
       [task_id],
     );
-    res.send({ projects: dbResponse.rows });
+    res.send({ tasks: dbResponse.rows });
   } catch (error) {
     next(error);
   }
