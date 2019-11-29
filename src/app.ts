@@ -29,15 +29,15 @@ export const getApp = async () => {
   });
 
   app.get("/api/projects", getProjects);
-  app.get("/api/project/:id", getProject);
+  app.get("/api/project/:projectId", getProject);
   app.post("/api/project", createProject);
   app.get("/api/myprojects/:userId", getUserProjects);
   app.get("/api/exploreprojects/:userId", getExploreProjects);
   app.get("/api/project/:project_id/member", getProjectTeam);
-  app.post("/api/projectTeam/:projectId/member/:userId", addTeamMember);
-  app.post("/api/projectTeam/:projectId/member/:userId", deleteTeamMember);
+  app.route("/api/projectTeam/:projectId/member/:userId")
+    .put(addTeamMember, getProject)
+    .delete(deleteTeamMember);
   app.post("/api/project/:projectId/tasks", getProjectTasks);
-
 
   app.get("/api/tasks", getTasks);
   app.get("/api/task/:id", getTask);

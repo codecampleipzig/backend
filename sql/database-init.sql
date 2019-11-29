@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS user_task (
 CREATE TABLE IF NOT EXISTS user_project (
   id serial NOT NULL PRIMARY KEY,
   user_id integer REFERENCES users(user_id) NOT NULL,
-  project_id integer REFERENCES projects(project_id) NOT NULL
+  project_id integer REFERENCES projects(project_id) NOT NULL,
+  UNIQUE (user_id, project_id)
 );
 

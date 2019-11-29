@@ -71,7 +71,7 @@ async function searchForProjects(searchTermQueryParam: string, limit: number, of
 export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Get Project
-    const project = await query("SELECT * from projects WHERE project_id = $1", [req.params.id]);
+    const project = await query("SELECT * from projects WHERE project_id = $1", [req.params.projectId]);
 
     // Get Project Creator and replace it in project
     const projectCreatorId = project.rows[0].projectCreator;
@@ -83,12 +83,12 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
       `SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from user_project up 
       JOIN users u ON up.user_id = u.user_id
       WHERE up.project_id = $1`,
-      [req.params.id]
+      [req.params.projectId]
     );
     project.rows[0].projectTeam = projectTeam.rows;
 
     // Get Tasks and tasksTeams and append to project
-    const tasks = await query(`SELECT * from tasks WHERE project_id = $1`, [req.params.id])
+    const tasks = await query(`SELECT * from tasks WHERE project_id = $1`, [req.params.projectId])
     // Create empty array in every task
     for (let i = 0; i < tasks.rows.length; i++) {
       tasks.rows[i].taskTeam = [];
@@ -98,7 +98,7 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
       JOIN user_task ut ON t.task_id = ut.task_id
       JOIN users u ON u.user_id = ut.user_id
       WHERE project_id = $1`,
-      [req.params.id]
+      [req.params.projectId]
     )
     // Loop through tasks and put every user by task into projectTasks
     tasksTeams.rows.forEach(element => {
@@ -191,14 +191,16 @@ export const getProjectTeam = async (req: Request, res: Response, next: NextFunc
 
 export const addTeamMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {project_id, user_id} = req.params;
+    const {projectId, userId} = req.params;
+
     const dbResponse = await query (
       `INSERT INTO user_project (project_id, user_id) 
-      VALUES ($1, $2) RETURNING *`, 
-      [project_id, user_id]
+      VALUES ($1, $2)`, 
+      [projectId, userId]
     );
-    res.send({ project_id, user_id});
+    next();
   }catch (error) {
+    console.log(error);
     next(error);
   }
 };
