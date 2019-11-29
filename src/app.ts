@@ -9,9 +9,13 @@ import {
   getProject,
   getUserProjects,
   getExploreProjects,
+  addTeamMember,
+  deleteTeamMember,
+  getProjectTeam,
+  getProjectTasks,
 } from "./controllers/projectControllers";
 import { getUser, registerUser, editUser, deleteUser } from "./controllers/userControllers";
-import { getTasks, getTask, createTask } from "./controllers/taskControllers";
+import { getTasks, getTask, createTask, deleteTask, getTaskTeam, addTaskMember, deleteTaskMember } from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 
 export const getApp = async () => {
@@ -29,10 +33,19 @@ export const getApp = async () => {
   app.post("/api/project", createProject);
   app.get("/api/myprojects/:userId", getUserProjects);
   app.get("/api/exploreprojects/:userId", getExploreProjects);
+  app.get("/api/project/:project_id/member", getProjectTeam);
+  app.post("/api/projectTeam/:projectId/member/:userId", addTeamMember);
+  app.post("/api/projectTeam/:projectId/member/:userId", deleteTeamMember);
+  app.post("/api/project/:projectId/tasks", getProjectTasks);
+
 
   app.get("/api/tasks", getTasks);
   app.get("/api/task/:id", getTask);
   app.post("/api/task", createTask);
+  app.post("/api/projectTask/:projectId/task/:taskId", deleteTask);
+  app.post("/api/taskTeam/:taskId/member", getTaskTeam);
+  app.post("/api/taskTeam/:taskId/member/:userId", addTaskMember);
+  app.post("/api/taskTeam/:taskId/member/:userId", deleteTaskMember);
 
   app.get("/api/user/:id", getUser);
   app.post("/api/register", registerUser);

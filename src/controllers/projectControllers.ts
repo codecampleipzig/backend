@@ -132,7 +132,8 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
     }
 
     await query(
-      "INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) VALUES($1, $2, $3, $4, $5)",
+      `INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) 
+      VALUES($1, $2, $3, $4, $5) RETURNING *`,
       [title, description, imageURL, goal, creator],
     );
     res.status(201).send({ status: "ok" });
@@ -168,6 +169,63 @@ export const getExploreProjects = async (req: Request, res: Response, next: Next
       [id],
     );
     res.send({ projects: dbResponse.rows });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProjectTeam = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const project_id = req.params.projectId;
+    const dbResponse = await query(
+      `SELECT project.project_id, user.user_id, user.user_name, user.user_mail, user_image_url FROM users
+      JOIN project_user on project_user.user_id = user.user_id
+      JOIN project on project_user.project_id = $1 RETURNING *`,
+      [project_id],
+    );
+    res.send({ projects: dbResponse.rows });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addTeamMember = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {project_id, user_id} = req.params;
+    const dbResponse = await query (
+      `INSERT INTO user_project (project_id, user_id) 
+      VALUES ($1, $2) RETURNING *`, 
+      [project_id, user_id]
+    );
+    res.send({ project_id, user_id});
+  }catch (error) {
+    next(error);
+  }
+};
+
+export const deleteTeamMember = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {project_id, user_id} = req.params;
+    const dbResponse = await query (
+      `DELETE FROM user_project 
+      WHERE user_project.project_id = $1 AND user_project.user_id = $2 RETURNING user_id`,
+      [project_id, user_id]
+    );
+    res.send({ project_id, user_id});
+  }catch (error) {
+    next(error);
+  }
+};
+
+export const getProjectTasks = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const project_id = req.params.projectId;
+    const dbResponse = await query(
+      `SELECT project.project_id, task_title, task_description, task_status, task_creator, task_init_date, menu_section FROM tasks
+      JOIN project on project.project_id = $1`,
+      [project_id],
+    );
+    res.send({ tasks: dbResponse.rows });
   } catch (error) {
     next(error);
   }
