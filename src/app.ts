@@ -36,7 +36,7 @@ export const getApp = async () => {
   app.get("/api/project/:project_id/member", getProjectTeam);
   app.route("/api/projectTeam/:projectId/member/:userId")
     .put(addTeamMember, getProject)
-    .delete(deleteTeamMember);
+    .delete(deleteTeamMember, getProject);
   app.post("/api/project/:projectId/tasks", getProjectTasks);
 
   app.get("/api/tasks", getTasks);
