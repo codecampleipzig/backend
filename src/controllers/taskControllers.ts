@@ -50,26 +50,26 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
 
 export const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {project_id, task_id} = req.params;
-    const dbResponse = await query (
+    const { projectId, taskId } = req.params;
+    const dbResponse = await query(
       `DELETE FROM task 
       WHERE task.task_id = $1 AND task.project_id = $2`,
-      [task_id, project_id]
+      [taskId, projectId],
     );
-    res.send({task_id, project_id});
-  }catch (error) {
+    res.send({ taskId, projectId });
+  } catch (error) {
     next(error);
   }
 };
 
 export const getTaskTeam = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const task_id = req.params.taskId;
+    const taskId = req.params.taskId;
     const dbResponse = await query(
       `SELECT task.task_id, user.user_id, user.user_name, user.user_mail, user_image_url FROM users
       JOIN task_user on task_user.user_id = user.user_id
       JOIN task on task_user.task_id = $1`,
-      [task_id],
+      [taskId],
     );
     res.send({ tasks: dbResponse.rows });
   } catch (error) {
@@ -79,29 +79,28 @@ export const getTaskTeam = async (req: Request, res: Response, next: NextFunctio
 
 export const addTaskMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {task_id, user_id} = req.params;
-    const dbResponse = await query (
+    const { taskId, userId } = req.params;
+    const dbResponse = await query(
       `INSERT INTO user_task (task_id, user_id) 
       VALUES ($1, $2) RETURNING *`,
-      [task_id, user_id]
+      [taskId, userId],
     );
-    res.send({ task_id, user_id});
-  }catch (error) {
+    res.send({ taskId, userId });
+  } catch (error) {
     next(error);
   }
 };
 
 export const deleteTaskMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {task_id, user_id} = req.params;
-    const dbResponse = await query (
+    const { taskId, userId } = req.params;
+    const dbResponse = await query(
       `DELETE FROM user_task 
       WHERE user_task.task_id = $1 AND user_task.user_id = $2 RETURNING user_id`,
-      [task_id, user_id]
+      [taskId, userId],
     );
-    res.send({ task_id, user_id});
-  }catch (error) {
+    res.send({ taskId, userId });
+  } catch (error) {
     next(error);
   }
 };
-

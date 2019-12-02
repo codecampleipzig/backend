@@ -15,7 +15,15 @@ import {
   getProjectTasks,
 } from "./controllers/projectControllers";
 import { getUser, registerUser, editUser, deleteUser } from "./controllers/userControllers";
-import { getTasks, getTask, createTask, deleteTask, getTaskTeam, addTaskMember, deleteTaskMember } from "./controllers/taskControllers";
+import {
+  getTasks,
+  getTask,
+  createTask,
+  deleteTask,
+  getTaskTeam,
+  addTaskMember,
+  deleteTaskMember,
+} from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 
 export const getApp = async () => {
@@ -34,7 +42,8 @@ export const getApp = async () => {
   app.get("/api/myprojects/:userId", getUserProjects);
   app.get("/api/exploreprojects/:userId", getExploreProjects);
   app.get("/api/project/:project_id/member", getProjectTeam);
-  app.route("/api/projectTeam/:projectId/member/:userId")
+  app
+    .route("/api/projectTeam/:projectId/member/:userId")
     .put(addTeamMember, getProject)
     .delete(deleteTeamMember);
   app.post("/api/project/:projectId/tasks", getProjectTasks);

@@ -18,12 +18,12 @@ describe("/api/projects", () => {
     expect(res.body.projects).toBeTruthy();
     expect(res.body.projects.length).toBeGreaterThan(0);
   });
-    it("Returns all projects for empty search term", async () => {
-      const app = await getApp();
-      const res = await request(app).get("/api/projects?searchTerm=");
-      expect(res.body.projects).toBeTruthy();
-      expect(res.body.projects.length).toBeGreaterThan(0);
-    });
+  it("Returns all projects for empty search term", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/projects?searchTerm=");
+    expect(res.body.projects).toBeTruthy();
+    expect(res.body.projects.length).toBeGreaterThan(0);
+  });
   it("Returns searched projects - single-word searchTerm", async () => {
     const app = await getApp();
     const res = await request(app).get("/api/projects?searchTerm=plan");
@@ -78,7 +78,24 @@ describe("/api/projects", () => {
     expect(res.body.projects).toBeFalsy();
     expect(res.status).toBe(400);
   });
-  
-  
-  
+});
+
+describe("/api/project", () => {
+  it("should create a new project", async () => {
+    const app = await getApp();
+    const res = await request(app)
+      .post("/api/project")
+      .send({
+        projectId: 2,
+        projectTitle: "Project B",
+        projectImageURL: "./../assets/project-default.png",
+        projectDescription:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        projectGoal: "Save the world",
+        projectStatus: "open",
+        projectCreator: 5,
+      });
+    expect(res.status).toEqual(201);
+    expect(res.body).toHaveProperty("post");
+  });
 });
