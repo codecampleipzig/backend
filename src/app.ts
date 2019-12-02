@@ -10,7 +10,7 @@ import {
   getUserProjects,
   getExploreProjects,
 } from "./controllers/projectControllers";
-import { getUser, registerUser, editUser, deleteUser } from "./controllers/userControllers";
+import { getUser, registerUser, loginUser, editUser, deleteUser } from "./controllers/userControllers";
 import { getTasks, getTask, createTask } from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 
@@ -19,6 +19,17 @@ export const getApp = async () => {
   app.use(urlencoded({ extended: false }));
   app.use(json());
   app.use(cors());
+
+  // Set protected for private routes available only to authenticated users
+    // Check if req has Authorization header
+      // If no, send status unauthorized 401
+      // If yes, extract user data from Authorization
+        // jwt.verify method to check extracted token from req authentication header 
+        // against private token generated from jwt 
+        // ser user in req.user
+
+// const protected;
+
 
   app.get("/api/test", (_, res) => {
     res.json({ ok: true });
@@ -34,8 +45,21 @@ export const getApp = async () => {
   app.get("/api/task/:id", getTask);
   app.post("/api/task", createTask);
 
+  /**
+   * Get user
+   */
   app.get("/api/user/:id", getUser);
+  
+  /**
+   * Register user
+   */
   app.post("/api/register", registerUser);
+
+  /**
+   * Login user
+   */
+  app.post("api/login", loginUser);
+
   app.put("/api/user/:id", editUser);
   app.delete("/api/task/:id", deleteUser);
 
