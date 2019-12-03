@@ -38,23 +38,23 @@ export const getApp = async () => {
 
   app.get("/api/projects", getProjects);
   app.get("/api/project/:projectId", getProject);
-  app.post("/api/project", createProject);
-  app.get("/api/myprojects/:userId", getUserProjects);
-  app.get("/api/exploreprojects/:userId", getExploreProjects);
-  app.get("/api/project/:project_id/member", getProjectTeam);
+  app.post("/api/project", createProject); // test with insomnia works
+  app.get("/api/myprojects/:userId", getUserProjects); // test with insomnia works
+  app.get("/api/exploreprojects/:userId", getExploreProjects); // test with insomnia works
+  app.get("/api/project/:project_id/member", getProjectTeam); 
   app
     .route("/api/projectTeam/:projectId/member/:userId")
     .put(addTeamMember, getProject)
     .delete(deleteTeamMember);
-  app.post("/api/project/:projectId/tasks", getProjectTasks);
+  app.get("/api/project/:projectId/tasks", getProjectTasks);
 
   app.get("/api/tasks", getTasks);
   app.get("/api/task/:id", getTask);
-  app.post("/api/task", createTask);
-  app.post("/api/projectTask/:projectId/task/:taskId", deleteTask);
-  app.post("/api/taskTeam/:taskId/member", getTaskTeam);
+  app.post("/api/project/:projectId/task", createTask); // doesn'T work yet on insomnia
+  app.delete("/api/project/:projectId/task/:taskId", deleteTask);
+  app.get("/api/taskTeam/:taskId/member", getTaskTeam);
   app.post("/api/taskTeam/:taskId/member/:userId", addTaskMember);
-  app.post("/api/taskTeam/:taskId/member/:userId", deleteTaskMember);
+  app.delete("/api/taskTeam/:taskId/member/:userId", deleteTaskMember);
 
   app.get("/api/user/:id", getUser);
   app.post("/api/register", registerUser);

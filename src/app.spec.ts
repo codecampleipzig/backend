@@ -1,17 +1,7 @@
 import request from "supertest";
 import { getApp } from "./app";
 
-describe("/api/test", () => {
-  it("works", async () => {
-    const app = await getApp();
-    const res = await request(app).get("/api/test");
-    const { ok } = res.body;
-    expect(res.status).toEqual(200);
-    expect(ok).toEqual(true);
-  });
-});
-
-describe("/api/projects", () => {
+xdescribe("/api/projects", () => {
   it("Returns some example projects", async () => {
     const app = await getApp();
     const res = await request(app).get("/api/projects");
@@ -99,3 +89,32 @@ describe("/api/project", () => {
     expect(res.body).toHaveProperty("post");
   });
 });
+
+describe("/api/project/:projectId/task", () => {
+  it("should create a new task", async () => {
+    const app = await getApp();
+    const res = await request(app)
+      .post("/api/project/:projectId/task")
+      .send({
+        taskId: 1,
+        projectId: 1,
+        taskTitle: "Our first task",
+        taskDescription:
+          "Recruit some team members. And here some more, to fill up your page: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        taskStatus: "open",
+        taskCreator: 3,
+        menuSection: "starter"
+      });
+    expect(res.status).toEqual(201);
+    expect(res.body).toHaveProperty("post");
+  });
+});
+
+describe("/api/myprojects/:userId", () => {
+  it("should return an Array of users Projects", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/myprojects/:userId");
+    expect(res.body.projects).toBeTruthy();
+    expect(res.body.projects.length).toBeGreaterThan(0);
+  })
+})

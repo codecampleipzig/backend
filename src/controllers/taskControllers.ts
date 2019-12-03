@@ -26,21 +26,22 @@ export const getTask = async (req: Request, res: Response, next: NextFunction) =
 export const createTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body = req.body;
-    const title = body.projectTitle;
-    const imageURL = body.projectImageURL;
-    const description = body.projectDescription;
-    const goal = body.projectGoal;
+    const projectId = req.params.projectId;
+    const title = body.taskTitle;
+    const description = body.taskDescription;
+    const goal = body.taskGoal;
     const status = body.taskStatus;
-    const creator = parseInt(body.projectCreator);
+    const creator = parseInt(body.taskCreator);
+    const menuSection = body.menuSection;
 
-    if (!title || !imageURL || !description || !goal || !status || Number.isNaN(creator)) {
+    if (!title || !description || !goal || !status || Number.isNaN(creator) || !menuSection) {
       throw new Error("Not a valid task");
     }
 
     await query(
-      `INSERT INTO tasks(task_title, task_description, task_image_url, task_goal, task_creator) 
-      VALUES($1, $2, $3, $4, $5, $6)`,
-      [title, imageURL, description, goal, status, creator],
+      `INSERT INTO tasks(project_id, task_title, task_description, task_goal, task_status, task_creator, menu_section) 
+      VALUES($1, $2, $3, $4, $5, $6, $7)`,
+      [projectId, title, description, goal, status, creator, menuSection],
     );
     res.status(201).send({ status: "ok" });
   } catch (error) {

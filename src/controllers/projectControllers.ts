@@ -2,7 +2,37 @@ import { Request, Response, NextFunction } from "express";
 import { query } from "../db";
 import { QueryResult } from "pg";
 import { Project } from "src/datatypes/Project";
-import { labeledStatement } from "@babel/types";
+
+function calculateSqlParamValue(param: string) {
+  return `%${param}%`.toLowerCase();
+}
+
+async function searchForProjects(searchTermQueryParam: string, limit: number, offset: number) {
+  let dbResponse: QueryResult<Project>;
+  function specifyPagination(limit: number, offset: number) {
+    return `LIMIT ${limit} OFFSET ${offset}`;
+  }
+  if (!searchTermQueryParam) {
+    dbResponse = await query("SELECT * from projects");
+  } else {
+    const searchTermQueryParamToArray = searchTermQueryParam.split(" ");
+
+    let queryString = "SELECT * from projects";
+    for (let i = 0; i < searchTermQueryParamToArray.length; i++) {
+      let queryCondition;
+      if (i == 0) {
+        queryCondition = ` WHERE LOWER(project_title) LIKE $${i + 1}`;
+      } else {
+        queryCondition = ` AND LOWER(project_title) LIKE $${i + 1}`;
+      }
+      queryString = queryString + queryCondition;
+      searchTermQueryParamToArray[i] = calculateSqlParamValue(searchTermQueryParamToArray[i]);
+    }
+
+    dbResponse = await query(queryString + specifyPagination(limit, offset), searchTermQueryParamToArray);
+  }
+  return dbResponse;
+}
 
 export const getProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -39,38 +69,6 @@ export const getProjects = async (req: Request, res: Response, next: NextFunctio
     next(error);
   }
 };
-
-async function searchForProjects(searchTermQueryParam: string, limit: number, offset: number) {
-  let dbResponse: QueryResult<Project>;
-  if (!searchTermQueryParam) {
-    dbResponse = await query("SELECT * from projects");
-  } else {
-    const searchTermQueryParamToArray = searchTermQueryParam.split(" ");
-
-    let queryString = "SELECT * from projects";
-    for (let i = 0; i < searchTermQueryParamToArray.length; i++) {
-      let queryCondition;
-      if (i == 0) {
-        queryCondition = ` WHERE LOWER(project_title) LIKE $${i + 1}`;
-      } else {
-        queryCondition = ` AND LOWER(project_title) LIKE $${i + 1}`;
-      }
-      queryString = queryString + queryCondition;
-      searchTermQueryParamToArray[i] = calculateSqlParamValue(searchTermQueryParamToArray[i]);
-    }
-
-    dbResponse = await query(queryString + specifyPagination(limit, offset), searchTermQueryParamToArray);
-  }
-  return dbResponse;
-
-  function calculateSqlParamValue(param: string) {
-    return `%${param}%`.toLowerCase();
-  }
-
-  function specifyPagination(limit: number, offset: number) {
-    return `LIMIT ${limit} OFFSET ${offset}`;
-  }
-}
 
 export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -125,6 +123,7 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+// Test with insomnia works
 export const createProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body = req.body;
@@ -137,7 +136,6 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
     if (!title || !description || !imageURL || !goal || Number.isNaN(creator)) {
       throw new Error("Not a valid project");
     }
-
     await query(
       `INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) 
       VALUES($1, $2, $3, $4, $5) RETURNING *`,
@@ -149,6 +147,7 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+// 
 export const getUserProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.userId;
