@@ -43,9 +43,9 @@ export const getApp = async () => {
   app.get("/api/task/:id", getTask);
   app.post("/api/task", createTask);
   app.post("/api/projectTask/:projectId/task/:taskId", deleteTask);
-  app.post("/api/taskTeam/:taskId/member", getTaskTeam);
-  app.post("/api/taskTeam/:taskId/member/:userId", addTaskMember);
-  app.post("/api/taskTeam/:taskId/member/:userId", deleteTaskMember);
+  app.route("/api/taskTeam/:taskId/member/:userId")
+    .put(addTaskMember, getProject)
+    .delete(deleteTaskMember, getProject);
 
   app.get("/api/user/:id", getUser);
   app.post("/api/register", registerUser);

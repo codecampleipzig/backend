@@ -79,13 +79,19 @@ export const getTaskTeam = async (req: Request, res: Response, next: NextFunctio
 
 export const addTaskMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {task_id, user_id} = req.params;
+    const {taskId, userId} = req.params;
+
+    /**
+     * Add projectId to params for next() getProject()
+     */
+    req.params.projectId = await getProjectId(taskId);
+
     const dbResponse = await query (
       `INSERT INTO user_task (task_id, user_id) 
-      VALUES ($1, $2) RETURNING *`,
-      [task_id, user_id]
+      VALUES ($1, $2)`,
+      [taskId, userId]
     );
-    res.send({ task_id, user_id});
+    next();
   }catch (error) {
     next(error);
   }
@@ -93,15 +99,37 @@ export const addTaskMember = async (req: Request, res: Response, next: NextFunct
 
 export const deleteTaskMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {task_id, user_id} = req.params;
+    const {taskId, userId} = req.params;
+    
+    /**
+     * Add projectId to params for next() getProject()
+     */
+    req.params.projectId = await getProjectId(taskId);
+
     const dbResponse = await query (
-      `DELETE FROM user_task 
-      WHERE user_task.task_id = $1 AND user_task.user_id = $2 RETURNING user_id`,
-      [task_id, user_id]
+      `DELETE FROM user_task ut
+      WHERE ut.task_id = $1 AND ut.user_id = $2`,
+      [taskId, userId]
     );
-    res.send({ task_id, user_id});
+    next();
   }catch (error) {
     next(error);
   }
 };
 
+/**
+ * Get ProjectId by TaskId by querying from tasks
+ * @param taskId 
+ */
+const getProjectId = async (taskId) => {
+  try {
+    const dbResponse = await query (
+      `SELECT project_id FROM tasks
+      WHERE task_id = $1`,
+      [taskId]
+    );
+    return dbResponse.rows[0].projectId;
+  }catch (error) {
+    return false
+  }
+}
