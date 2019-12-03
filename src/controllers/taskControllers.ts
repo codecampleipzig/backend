@@ -77,13 +77,40 @@ export const getTaskTeam = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+/**
+ * updateTask's status with taskStatus is set in the body.
+ */
+export const updateTask = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {taskId} = req.params;
+    const taskStatus = req.body.taskStatus;
+
+    // Add projectId to params for next() getProject()
+    req.params.projectId = await getProjectId(taskId);
+
+    if ( taskStatus ) {
+      const dbResponse = await query (
+        `UPDATE tasks
+        SET task_status = $2
+        WHERE task_id = $1`,
+        [taskId, taskStatus]
+      );
+      next();
+    }
+    else {
+      res.send({ "response" : "please set taskStatus"});
+    }
+
+  }catch (error) {
+    next(error);
+  }
+};
+
 export const addTaskMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {taskId, userId} = req.params;
 
-    /**
-     * Add projectId to params for next() getProject()
-     */
+    // Add projectId to params for next() getProject()
     req.params.projectId = await getProjectId(taskId);
 
     const dbResponse = await query (
@@ -101,9 +128,7 @@ export const deleteTaskMember = async (req: Request, res: Response, next: NextFu
   try {
     const {taskId, userId} = req.params;
     
-    /**
-     * Add projectId to params for next() getProject()
-     */
+    // Add projectId to params for next() getProject()
     req.params.projectId = await getProjectId(taskId);
 
     const dbResponse = await query (
