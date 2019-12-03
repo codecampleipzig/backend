@@ -58,7 +58,7 @@ export const getApp = async () => {
   /**
    * Login user
    */
-  app.post("api/login", loginUser);
+  app.post("/api/login", loginUser);
 
   app.put("/api/user/:id", editUser);
   app.delete("/api/task/:id", deleteUser);

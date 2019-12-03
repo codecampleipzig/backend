@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { query } from "./../db";
 import { QueryResult } from "pg";
 // import { bcrypt } from "bcryptjs";
-import { hash } from "bcrypt";
-import { jwt } from "jsonwebtoken";
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
 import { users } from "../mockdata";
 
 // Generate private key with jwt using the following command in node:
@@ -45,7 +45,7 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
       return res.status(422).send({ message: "Registration not successful." })
     }
 
-    const hashedPassword = await hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user in DB
     const { rows } = await query(
@@ -66,12 +66,14 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   // take user data from req.body
+  
   const { email, password } = req.body;
 
   // check for value in name, email and password - required fields validation
   if (!email || !password) {
     return res.status(400).send({ message: "Email or password required." });
   }
+
 
   // TODO: check for expected value in name, email and password - valid data format
   // name: string containing letters, numbers?, special characters?
@@ -83,18 +85,33 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
     `SELECT * 
     FROM users 
     WHERE user_email = $1`,
-    [email]);
+    [email]
+  );
 
   // if not found, return message, status 404 (Not a good practice, but leave it for now)
   const user = dbUserCheck.rows[0];
 
   if (!user) {
-    return res.status(404).send({ message: "User with that email not found" })
+    return res.status(404).send({ message: "User with that email not found - Incorrect credentials, please try again." })
   }
+
+  const passwordMatch: boolean = await bcrypt.compare(password, user.password);
+
   // if found, check if password is correct (using bcrypt.compare method)
-  
-  //  if entered password doesn't match, return 401 message
-  //  if entered password matches, return success and set access token with jwt.sign 
+  if (!passwordMatch) {
+    //  if entered password doesn't match, return 401 message
+    res.status(401).send({ message: "Password is not correct - Incorrect credentials, please try again." });
+  } else {
+    //  if entered password matches, return success and set access token with jwt.sign 
+    // Authorization
+    const accessToken: string = jwt.sign(user, secret);
+    res.send({
+      message: "User logged in successfully.",
+      token: accessToken
+    })
+  }
+
+
   // return response/redirect?
 }
 
