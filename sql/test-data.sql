@@ -32,27 +32,41 @@ VALUES
 ('Blood donations', 'http://www.la.one.un.org/images/press-releases/UNV/_DSC3846_opt.jpg', 'By hosting a blood drive, our community can make a real difference. Red cross provides planning assistance, recruitment tools, equipment, supplies, and a trained staff to screen and collect donations safely.', 'Help advertise, recruit student, faculty and staff donors for the drives and assist during the drives to ensure that they run safely and smoothly.','open', 7),
 ('Cooking for homeless people', 'https://pcdn.columbian.com/wp-content/uploads/2018/11/1109_met_YOUTH-CARE-CENTER-1.jpg', 'Making a basic meal of warmth and comfort is easy to do. Importantly, it can help lift some of that burden from those folks and the shelters that help harbor them.','Prepare a home-cooked meal for the residents of a nearby homeless shelter','open', 10);
 
+INSERT INTO sections (project_id, section_title, section_description, section_due, section_status, section_creator)
+VALUES 
+(1, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 1),
+(1, 'Kick Off 2', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
+(2, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
+(3, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
+(4, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
+(5, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
+(6, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
+(7, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
+(8, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
+(9, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
+(10, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
 
-INSERT INTO tasks (project_id, task_title, task_description, task_status, task_creator, menu_section)
-VALUES (1, 'Get Djs', 'ask Mariana and Lena to dj', 'open', 1, 'starter'),
-(1, 'Order Champagne', 'make everyone happy. and ask Lena where to find the best Champagen in town', 'closed', 12,  'starter'),
-(1, 'Buy a lot of Burger', 'Make everyone very happy. buy the best burger in town, but ask Gabe where to find them, because he knows', 'open', 7, 'starter'),
-(2, 'Book the flight', 'look or the cheapest flights', 'delete', '9', 'starter'),
-(2, 'Plan food', 'go through the most delicios receipts and look at all the picture and be excited for the food', 'open', 11, 'starter'),
-(4, 'Find location for music classes', 'Contact facilities around town that might be willing to share their free space', 'closed', 1, 'starter'),
-(4, 'Organize around getting instruments', 'Ask people for donations of their once-loved but no-longer-used musical instruments', 'open', 5, 'starter'),
-(4, 'Help organize an outing to a local concert or performance', 'Check local listings to find performances appropriate for kids.','open', 3, 'starter'),
-(5, 'Contact local food bank', 'Gather necessary information and materials to have a food drive.', 'open', 2, 'starter'),
-(5, 'Promote our food drive', 'Offer prizes to individuals who donate the most.', 'open', 8, 'starter'),
-(6, 'Some people prefer quantifiable activities because they feel they look stronger on college applications', 'Many community service activities can help you gain skills. These skills can range from teaching to medicine to construction and more.', 'open', 6, 'starter'),
-(6, 'Write articles and give speeches advocating financial literarcy.', 'First you should learn about the topics themselves, like calculating housing costs, or understanding personal loans, and then give presentations on these topics.', 'open', 13, 'starter'),
-(7, 'Buy Christmas trees and distribute them to needy individuals', 'spread hope and joy by giving Christmas trees to families in need. We are just neighbors helping neighbors, building a little community and spreading good cheer in the process. Want to join the Santas?', 'open', 12, 'starter'),
-(7, 'Hold a fundraiser.', 'Find bands willing to perform sing-alongs. Christmas caroling has never been this much fun!', 'open', 15, 'starter'),
-(8, 'Form a planning committee for preliminary decisions', 'Identify and invite leaders within the community and other interested people to an organizational meeting and social gathering.', 'open', 1, 'starter'),
-(8, 'Choose a name for the garden.', 'Create a prioritized budget and a wish list of desired donations and update it regularly', 'open', 5, 'starter'),
-(8, 'Decide on the scope of garden including the size and the components', 'Make management decisions including whether there will be any restrictions on the use of pesticides and fertilizers. ', 'open', 13, 'starter'),
-(9, 'Check in donors as they arrive at the drive.', 'Find bands willing to perform sing-alongs. Christmas caroling has never been this much fun!', 'open', 15, 'starter'),
-(10, 'Ask businesses for their leftovers.', 'Try finding philanthropic restaurants and ask them if you can use their kitchen to prepare meals when they are closed', 'open', 7, 'starter');
+INSERT INTO tasks (project_id, section_id, task_title, task_description, task_status, task_creator)
+VALUES 
+(1, 1, 'Get Djs', 'ask Mariana and Lena to dj', 'open', 1),
+(1, 1, 'Order Champagne', 'make everyone happy. and ask Lena where to find the best Champagen in town', 'closed', 12),
+(1, 1, 'Buy a lot of Burger', 'Make everyone very happy. buy the best burger in town, but ask Gabe where to find them, because he knows', 'open', 7),
+(2, 3, 'Book the flight', 'look or the cheapest flights', 'delete', '9'),
+(2, 3, 'Plan food', 'go through the most delicios receipts and look at all the picture and be excited for the food', 'open', 11),
+(4, 5, 'Find location for music classes', 'Contact facilities around town that might be willing to share their free space', 'closed', 1),
+(4, 5, 'Organize around getting instruments', 'Ask people for donations of their once-loved but no-longer-used musical instruments', 'open', 5),
+(4, 5, 'Help organize an outing to a local concert or performance', 'Check local listings to find performances appropriate for kids.','open', 3),
+(5, 6, 'Contact local food bank', 'Gather necessary information and materials to have a food drive.', 'open', 2),
+(5, 6, 'Promote our food drive', 'Offer prizes to individuals who donate the most.', 'open', 8),
+(6, 7, 'Some people prefer quantifiable activities because they feel they look stronger on college applications', 'Many community service activities can help you gain skills. These skills can range from teaching to medicine to construction and more.', 'open', 6),
+(6, 7, 'Write articles and give speeches advocating financial literarcy.', 'First you should learn about the topics themselves, like calculating housing costs, or understanding personal loans, and then give presentations on these topics.', 'open', 13),
+(7, 8, 'Buy Christmas trees and distribute them to needy individuals', 'spread hope and joy by giving Christmas trees to families in need. We are just neighbors helping neighbors, building a little community and spreading good cheer in the process. Want to join the Santas?', 'open', 12),
+(7, 8, 'Hold a fundraiser.', 'Find bands willing to perform sing-alongs. Christmas caroling has never been this much fun!', 'open', 15),
+(8, 9, 'Form a planning committee for preliminary decisions', 'Identify and invite leaders within the community and other interested people to an organizational meeting and social gathering.', 'open', 1),
+(8, 9, 'Choose a name for the garden.', 'Create a prioritized budget and a wish list of desired donations and update it regularly', 'open', 5),
+(8, 9, 'Decide on the scope of garden including the size and the components', 'Make management decisions including whether there will be any restrictions on the use of pesticides and fertilizers. ', 'open', 13),
+(9, 10, 'Check in donors as they arrive at the drive.', 'Find bands willing to perform sing-alongs. Christmas caroling has never been this much fun!', 'open', 15),
+(10, 11, 'Ask businesses for their leftovers.', 'Try finding philanthropic restaurants and ask them if you can use their kitchen to prepare meals when they are closed', 'open', 7);
 
 
 

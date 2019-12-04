@@ -137,6 +137,8 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
       throw new Error("Not a valid project");
     }
 
+    // TODO: Create new Inital Section
+
     await query(
       `INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) 
       VALUES($1, $2, $3, $4, $5) RETURNING *`,
