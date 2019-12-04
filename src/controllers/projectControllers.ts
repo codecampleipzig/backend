@@ -147,7 +147,7 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-// 
+//
 export const getUserProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.userId;
@@ -211,4 +211,3 @@ export const deleteTeamMember = async (req: Request, res: Response, next: NextFu
     next(error);
   }
 };
-

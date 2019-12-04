@@ -70,13 +70,12 @@ xdescribe("/api/projects", () => {
   });
 });
 
-describe("/api/project", () => {
+xdescribe("/api/project", () => {
   it("should create a new project", async () => {
     const app = await getApp();
     const res = await request(app)
       .post("/api/project")
       .send({
-        projectId: 2,
         projectTitle: "Project B",
         projectImageURL: "./../assets/project-default.png",
         projectDescription:
@@ -90,31 +89,30 @@ describe("/api/project", () => {
   });
 });
 
-describe("/api/project/:projectId/task", () => {
+xdescribe("/api/project/:projectId/task", () => {
   it("should create a new task", async () => {
     const app = await getApp();
     const res = await request(app)
       .post("/api/project/:projectId/task")
       .send({
-        taskId: 1,
         projectId: 1,
         taskTitle: "Our first task",
         taskDescription:
           "Recruit some team members. And here some more, to fill up your page: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         taskStatus: "open",
         taskCreator: 3,
-        menuSection: "starter"
+        menuSection: "starter",
       });
     expect(res.status).toEqual(201);
     expect(res.body).toHaveProperty("post");
   });
 });
 
-describe("/api/myprojects/:userId", () => {
+xdescribe("/api/myprojects/:userId", () => {
   it("should return an Array of users Projects", async () => {
     const app = await getApp();
     const res = await request(app).get("/api/myprojects/:userId");
     expect(res.body.projects).toBeTruthy();
     expect(res.body.projects.length).toBeGreaterThan(0);
-  })
-})
+  });
+});

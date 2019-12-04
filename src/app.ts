@@ -10,15 +10,10 @@ import {
   getUserProjects,
   getExploreProjects,
   addTeamMember,
-  deleteTeamMember
+  deleteTeamMember,
 } from "./controllers/projectControllers";
 import { getUser, registerUser, editUser, deleteUser } from "./controllers/userControllers";
-import {
-  createTask,
-  addTaskMember,
-  deleteTaskMember,
-  updateTask,
-} from "./controllers/taskControllers";
+import { createTask, addTaskMember, deleteTaskMember, updateTask } from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 
 export const getApp = async () => {

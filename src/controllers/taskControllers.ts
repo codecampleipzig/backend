@@ -1,6 +1,23 @@
 import { Request, Response, NextFunction } from "express";
 import { query } from "../db";
 
+/**
+ * Get ProjectId by TaskId by querying from tasks
+ * @param taskId
+ */
+const getProjectId = async taskId => {
+  try {
+    const dbResponse = await query(
+      `SELECT project_id FROM tasks
+      WHERE task_id = $1`,
+      [taskId],
+    );
+    return dbResponse.rows[0].projectId;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const createTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body = req.body;
@@ -101,22 +118,5 @@ export const deleteTaskMember = async (req: Request, res: Response, next: NextFu
     next();
   } catch (error) {
     next(error);
-  }
-};
-
-/**
- * Get ProjectId by TaskId by querying from tasks
- * @param taskId
- */
-const getProjectId = async taskId => {
-  try {
-    const dbResponse = await query(
-      `SELECT project_id FROM tasks
-      WHERE task_id = $1`,
-      [taskId],
-    );
-    return dbResponse.rows[0].projectId;
-  } catch (error) {
-    return false;
   }
 };
