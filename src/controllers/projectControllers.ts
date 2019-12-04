@@ -214,12 +214,14 @@ export const addTeamMember = async (req: Request, res: Response, next: NextFunct
 export const deleteTeamMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { projectId, userId } = req.params;
+
     const dbResponse = await query(
-      `DELETE FROM user_project 
-      WHERE user_project.project_id = $1 AND user_project.user_id = $2 RETURNING user_id`,
+      `DELETE FROM user_project up
+      WHERE up.project_id = $1 AND up.user_id = $2`,
       [projectId, userId],
     );
-    res.send({ projectId, userId });
+
+    next();
   } catch (error) {
     next(error);
   }
