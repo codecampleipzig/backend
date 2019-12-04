@@ -12,7 +12,7 @@
     "test:lint": "eslint --ext .ts ./src",
     "test:lint:fix": "npm run test:lint -- --fix",
     "test": "npm run test:lint && npm run test:unit",
-    "compodoc": "compodoc -p tsconfig.app.json --coverageTest 70 --coverageMinimumPerFile 20 --coverageTestThresholdFail false --coverageTestShowOnlyFailed"
+    "compodoc": "compodoc -p tsconfig.json --coverageTest 70 --coverageMinimumPerFile 20 --coverageTestThresholdFail false --coverageTestShowOnlyFailed"
   },
   "nodemonConfig": {
     "ignore": [
