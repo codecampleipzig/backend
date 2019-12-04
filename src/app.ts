@@ -15,7 +15,15 @@ import {
   getProjectTasks,
 } from "./controllers/projectControllers";
 import { getUser, registerUser, editUser, deleteUser } from "./controllers/userControllers";
-import { getTasks, getTask, createTask, deleteTask, addTaskMember, deleteTaskMember, updateTask } from "./controllers/taskControllers";
+import {
+  getTasks,
+  getTask,
+  createTask,
+  deleteTask,
+  addTaskMember,
+  deleteTaskMember,
+  updateTask,
+} from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 
 export const getApp = async () => {
@@ -34,7 +42,8 @@ export const getApp = async () => {
   app.get("/api/myprojects/:userId", getUserProjects);
   app.get("/api/exploreprojects/:userId", getExploreProjects);
   app.get("/api/project/:project_id/member", getProjectTeam);
-  app.route("/api/projectTeam/:projectId/member/:userId")
+  app
+    .route("/api/projectTeam/:projectId/member/:userId")
     .put(addTeamMember, getProject)
     .delete(deleteTeamMember, getProject);
   app.post("/api/project/:projectId/tasks", getProjectTasks);
@@ -43,9 +52,9 @@ export const getApp = async () => {
   app.get("/api/task/:id", getTask);
   app.post("/api/task", createTask);
   app.post("/api/projectTask/:projectId/task/:taskId", deleteTask);
-  app.route("/api/task/:taskId")
-    .patch(updateTask, getProject);
-  app.route("/api/taskTeam/:taskId/member/:userId")
+  app.route("/api/task/:taskId").patch(updateTask, getProject);
+  app
+    .route("/api/taskTeam/:taskId/member/:userId")
     .put(addTaskMember, getProject)
     .delete(deleteTaskMember, getProject);
 

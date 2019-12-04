@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { query } from "../db";
 import { QueryResult } from "pg";
 import { Project } from "src/datatypes/Project";
-import { labeledStatement } from "@babel/types";
 
 export const getProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -29,7 +28,11 @@ export const getProjects = async (req: Request, res: Response, next: NextFunctio
       return res.status(400).send({ message: "Offset has to be a non-negative number" });
     }
 
-    var dbResponse: QueryResult<Project> = await searchForProjects(searchTermQueryParam, limitParamNum, offsetParamNum);
+    const dbResponse: QueryResult<Project> = await searchForProjects(
+      searchTermQueryParam,
+      limitParamNum,
+      offsetParamNum,
+    );
     res.send({ projects: dbResponse.rows });
   } catch (error) {
     next(error);
@@ -37,7 +40,7 @@ export const getProjects = async (req: Request, res: Response, next: NextFunctio
 };
 
 async function searchForProjects(searchTermQueryParam: string, limit: number, offset: number) {
-  var dbResponse: QueryResult<Project>;
+  let dbResponse: QueryResult<Project>;
   if (!searchTermQueryParam) {
     dbResponse = await query("SELECT * from projects");
   } else {
@@ -75,7 +78,10 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
 
     // Get Project Creator and replace it in project
     const projectCreatorId = project.rows[0].projectCreator;
-    const projectCreator = await query("SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from users u WHERE user_id = $1", [projectCreatorId]);
+    const projectCreator = await query(
+      "SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from users u WHERE user_id = $1",
+      [projectCreatorId],
+    );
     project.rows[0].projectCreator = projectCreator.rows[0];
 
     // Get project Team and append to project
@@ -83,12 +89,12 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
       `SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from user_project up 
       JOIN users u ON up.user_id = u.user_id
       WHERE up.project_id = $1`,
-      [req.params.projectId]
+      [req.params.projectId],
     );
     project.rows[0].projectTeam = projectTeam.rows;
 
     // Get Tasks and tasksTeams and append to project
-    const tasks = await query(`SELECT * from tasks WHERE project_id = $1`, [req.params.projectId])
+    const tasks = await query(`SELECT * from tasks WHERE project_id = $1`, [req.params.projectId]);
     // Create empty array in every task
     for (let i = 0; i < tasks.rows.length; i++) {
       tasks.rows[i].taskTeam = [];
@@ -98,11 +104,11 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
       JOIN user_task ut ON t.task_id = ut.task_id
       JOIN users u ON u.user_id = ut.user_id
       WHERE project_id = $1`,
-      [req.params.projectId]
-    )
+      [req.params.projectId],
+    );
     // Loop through tasks and put every user by task into projectTasks
     tasksTeams.rows.forEach(element => {
-      const {taskId} = element;
+      const { taskId } = element;
       delete element.taskId;
       tasks.rows.find(t => t.taskId == taskId).taskTeam.push(element);
     });
@@ -191,15 +197,15 @@ export const getProjectTeam = async (req: Request, res: Response, next: NextFunc
 
 export const addTeamMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {projectId, userId} = req.params;
+    const { projectId, userId } = req.params;
 
-    const dbResponse = await query (
+    const dbResponse = await query(
       `INSERT INTO user_project (project_id, user_id) 
-      VALUES ($1, $2)`, 
-      [projectId, userId]
+      VALUES ($1, $2)`,
+      [projectId, userId],
     );
     next();
-  }catch (error) {
+  } catch (error) {
     console.log(error);
     next(error);
   }
@@ -207,16 +213,16 @@ export const addTeamMember = async (req: Request, res: Response, next: NextFunct
 
 export const deleteTeamMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const {projectId, userId} = req.params;
+    const { projectId, userId } = req.params;
 
-    const dbResponse = await query (
+    const dbResponse = await query(
       `DELETE FROM user_project up
       WHERE up.project_id = $1 AND up.user_id = $2`,
-      [projectId, userId]
+      [projectId, userId],
     );
 
     next();
-  }catch (error) {
+  } catch (error) {
     next(error);
   }
 };

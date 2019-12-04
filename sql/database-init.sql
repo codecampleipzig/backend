@@ -39,12 +39,12 @@ CREATE TABLE IF NOT EXISTS tasks (
 CREATE TABLE IF NOT EXISTS user_task (
   user_id integer REFERENCES users(user_id) NOT NULL,
   task_id integer REFERENCES tasks(task_id) NOT NULL,
-  UNIQUE (user_id, task_id)
+  PRIMARY KEY (user_id, task_id)
 );
 
 CREATE TABLE IF NOT EXISTS user_project (
   user_id integer REFERENCES users(user_id) NOT NULL,
   project_id integer REFERENCES projects(project_id) NOT NULL,
-  UNIQUE (user_id, project_id)
+  PRIMARY KEY (user_id, project_id)
 );
 

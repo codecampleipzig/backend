@@ -18,12 +18,12 @@ describe("/api/projects", () => {
     expect(res.body.projects).toBeTruthy();
     expect(res.body.projects.length).toBeGreaterThan(0);
   });
-    it("Returns all projects for empty search term", async () => {
-      const app = await getApp();
-      const res = await request(app).get("/api/projects?searchTerm=");
-      expect(res.body.projects).toBeTruthy();
-      expect(res.body.projects.length).toBeGreaterThan(0);
-    });
+  it("Returns all projects for empty search term", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/projects?searchTerm=");
+    expect(res.body.projects).toBeTruthy();
+    expect(res.body.projects.length).toBeGreaterThan(0);
+  });
   it("Returns searched projects - single-word searchTerm", async () => {
     const app = await getApp();
     const res = await request(app).get("/api/projects?searchTerm=plan");
@@ -78,7 +78,4 @@ describe("/api/projects", () => {
     expect(res.body.projects).toBeFalsy();
     expect(res.status).toBe(400);
   });
-  
-  
-  
 });
