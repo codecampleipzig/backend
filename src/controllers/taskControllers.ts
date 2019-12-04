@@ -1,28 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { query } from "../db";
 
-export const getTasks = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const dbResponse = await query(`SELECT * from tasks`);
-    res.send({ tasks: dbResponse.rows });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getTask = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const dbResponse = await query(`SELECT * from tasks WHERE task_id = $1`, [req.params.id]);
-    if (dbResponse.rows.length == 1) {
-      res.send({ project: dbResponse.rows[0] });
-    } else {
-      res.status(404).send({ error: "Task not found" });
-    }
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const createTask = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body = req.body;
@@ -43,20 +21,6 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
       [projectId, title, description, status, creator, menuSection],
     );
     res.status(201).send({ status: "ok" });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { projectId, taskId } = req.params;
-    const dbResponse = await query(
-      `DELETE FROM task 
-      WHERE task.task_id = $1 AND task.project_id = $2`,
-      [taskId, projectId],
-    );
-    res.send({ taskId, projectId });
   } catch (error) {
     next(error);
   }

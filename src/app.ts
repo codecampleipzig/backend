@@ -10,16 +10,11 @@ import {
   getUserProjects,
   getExploreProjects,
   addTeamMember,
-  deleteTeamMember,
-  getProjectTeam,
-  getProjectTasks,
+  deleteTeamMember
 } from "./controllers/projectControllers";
 import { getUser, registerUser, editUser, deleteUser } from "./controllers/userControllers";
 import {
-  getTasks,
-  getTask,
   createTask,
-  deleteTask,
   addTaskMember,
   deleteTaskMember,
   updateTask,
@@ -36,22 +31,17 @@ export const getApp = async () => {
     res.json({ ok: true });
   });
 
-  app.get("/api/projects", getProjects);
+  app.get("/api/projects", getProjects); // for searchbar
   app.get("/api/project/:projectId", getProject);
   app.post("/api/project", createProject); // test with insomnia works
   app.get("/api/myprojects/:userId", getUserProjects); // test with insomnia works
   app.get("/api/exploreprojects/:userId", getExploreProjects); // test with insomnia works
-  app.get("/api/project/:project_id/member", getProjectTeam);
   app
     .route("/api/projectTeam/:projectId/member/:userId")
     .put(addTeamMember, getProject)
     .delete(deleteTeamMember, getProject);
-  app.post("/api/project/:projectId/tasks", getProjectTasks);
 
-  app.get("/api/tasks", getTasks);
-  app.get("/api/task/:id", getTask);
-  app.post("/api/task", createTask); // test with insomnia works
-  app.post("/api/projectTask/:projectId/task/:taskId", deleteTask);
+  app.post("/api/project/:projectId/task", createTask); // test with insomnia works
   app.route("/api/task/:taskId").patch(updateTask, getProject);
   app
     .route("/api/taskTeam/:taskId/member/:userId")
@@ -61,7 +51,7 @@ export const getApp = async () => {
   app.get("/api/user/:id", getUser);
   app.post("/api/register", registerUser);
   app.put("/api/user/:id", editUser);
-  app.delete("/api/task/:id", deleteUser);
+  app.delete("/api/user/:id", deleteUser);
 
   app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     res.status(500);

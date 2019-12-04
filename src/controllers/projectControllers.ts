@@ -180,21 +180,6 @@ export const getExploreProjects = async (req: Request, res: Response, next: Next
   }
 };
 
-export const getProjectTeam = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const projectId = req.params.projectId;
-    const dbResponse = await query(
-      `SELECT project.project_id, user.user_id, user.user_name, user.user_mail, user_image_url FROM users
-      JOIN project_user on project_user.user_id = user.user_id
-      JOIN project on project_user.project_id = $1 RETURNING *`,
-      [projectId],
-    );
-    res.send({ projects: dbResponse.rows });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const addTeamMember = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { projectId, userId } = req.params;
@@ -227,16 +212,3 @@ export const deleteTeamMember = async (req: Request, res: Response, next: NextFu
   }
 };
 
-export const getProjectTasks = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const projectId = req.params.projectId;
-    const dbResponse = await query(
-      `SELECT project.project_id, task_title, task_description, task_status, task_creator, task_init_date, menu_section FROM tasks
-      JOIN project on project.project_id = $1`,
-      [projectId],
-    );
-    res.send({ tasks: dbResponse.rows });
-  } catch (error) {
-    next(error);
-  }
-};
