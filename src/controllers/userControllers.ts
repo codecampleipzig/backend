@@ -9,7 +9,7 @@ import { User } from "src/datatypes/User";
 
 // Generate private key with jwt using the following command in node:
 // require('crypto').randomBytes(64).toString('hex')
-const secret = "fbf50189319aa851c000ded939929376c7fdfc040993c6ebf71477baf6c008ea09dcb041616358c001b7230f6f06b6d46b006c26f154e50a6f160caaf30f7a42";
+export const secret = "fbf50189319aa851c000ded939929376c7fdfc040993c6ebf71477baf6c008ea09dcb041616358c001b7230f6f06b6d46b006c26f154e50a6f160caaf30f7a42";
 
 export const getUser = (req: Request, res: Response) => {
   const id = req.params.id;
@@ -25,10 +25,24 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     if (!username || !email || !password) {
       return res.status(400).send({ message: "Username, email or password required." });
     }
+
+    const usernameRegex = RegExp("regular expression");
+    const emailRegex = RegExp("regular expression");
+    const passwordRegex = RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&].{8,}");
+
     // TODO: Check for expected value in name, email and password - valid data format
     // name: string containing letters, numbers?, special characters?
+    // if (!usernameRegex.test(username)) {
+    //   console.log(`Username: ${username} does not match the username regex ${usernameRegex}`);
+    // }
+
     // email: standard email format validation a@a.a
+
     // password: Your password must contain an uppercase, a lowercase, a special character and a number.
+    if (!passwordRegex.test(password)) {
+      console.log(`Password: ${password} does not match the password regex ${passwordRegex}`);
+      return res.sendStatus(400);
+    }
 
     // TODO: Don't we have to have Confirm Password field on Register form?
     // If yes, then check if password confirmation matches password field
@@ -54,8 +68,10 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
       [username, email, hashedPassword]
     );
 
-    const user: User = rows[0];
-    
+    const dbUser = rows[0];
+
+    const user = mapToJwtUserModel(dbUser);
+
     // Once user is created, return success and set access token 
     // Authorization
     const accessToken: string = jwt.sign(user, secret);
@@ -90,15 +106,15 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
     [email]
   );
 
-  const user = dbUserCheck.rows[0];
+  const dbUser = dbUserCheck.rows[0];
 
   // If not found, return message, status 404 (Not a good practice, but leave it for now)
-  if (!user) {
+  if (!dbUser) {
     return res.status(404).send({ message: "Incorrect credentials, please try again." })
   }
 
   // If found, check for password match
-  const passwordMatch: boolean = await bcrypt.compare(password, user.password);
+  const passwordMatch: boolean = await bcrypt.compare(password, dbUser.password);
 
   // If entered password doesn't match, return 401 message
   if (!passwordMatch) {
@@ -107,12 +123,26 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
   else {
     // If entered password matches, return success and set access token 
     // Authorization
+
+    const user = mapToJwtUserModel(dbUser);
+
     const accessToken: string = jwt.sign(user, secret);
     res.send({
       message: "User logged in successfully.",
       token: accessToken
     });
   }
+}
+
+function mapToJwtUserModel(dbUser: any): User {
+  const user: User = {
+    userId: dbUser.userId,
+    userName: dbUser.userName,
+    userEmail: dbUser.userEmail,
+    userImageURL: dbUser.userImageUrl
+  };
+
+  return user;
 }
 
 export const editUser = (req: Request, res: Response) => {

@@ -2,6 +2,7 @@ import express from "express";
 import { Request, Response, NextFunction } from "express";
 import { json, urlencoded } from "body-parser";
 import cors from "cors";
+import * as jwt from "jsonwebtoken";
 
 import {
   createProject,
@@ -10,7 +11,7 @@ import {
   getUserProjects,
   getExploreProjects,
 } from "./controllers/projectControllers";
-import { getUser, registerUser, loginUser, editUser, deleteUser } from "./controllers/userControllers";
+import { secret, getUser, registerUser, loginUser, editUser, deleteUser } from "./controllers/userControllers";
 import { getTasks, getTask, createTask } from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 
@@ -21,47 +22,63 @@ export const getApp = async () => {
   app.use(cors());
 
   // Set protected for private routes available only to authenticated users
+  const protectedRoute = (req: Request, res: Response, next: NextFunction) => {
     // Check if req has Authorization header
-      // If no, send status unauthorized 401
-      // If yes, extract user data from Authorization
-        // jwt.verify method to check extracted token from req authentication header 
-        // against private token generated from jwt 
-        // ser user in req.user
 
-// const protected;
+    const authHeader = req.headers["authorization"];
+    // Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwibmFtZSI6Ik5pY2siLCJlbWFpbCI6Im5pY2tAbmljay5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRPemhPRUthU3hGYkRWeXVNQm05dVlPRWw3RlZsdnRMMFphd1NZZlpwL29acHZtZjVaV3pIVyIsImlhdCI6MTU3NDk1NDQ2OX0.ZoKpP1KfpMocTL0BZFXo86TDvQKseaGW4u7_vWqMb_8
 
+    // If yes, extract user data from Authorization
+    const accessToken = authHeader && authHeader.split(" ")[1];
+    // If no token value, send status unauthorized 401
+    console.log(`Access token is: ${accessToken}`);
+    console.log(`NOT Access token is: ${!accessToken}`);
+    if (!accessToken) {
+      return res.sendStatus(401);
+    }
+
+    jwt.verify(accessToken, secret, (err, user) => {
+      // If error in token verification, send status forbidden 403
+      if (err) return res.sendStatus(403);
+      //.status(403).send({ message: `After jwt verify ${err}` }) 
+      // OK, WORKING LIKE THIS WHEN AUTHORIZATION HEADER HAS EMPTY VALUE
+      // OK, WORKING LIKE THIS WHEN AUTHORIZATION HEADER HAS INCORRECT VALUE
+
+      // .sendStatus(403);
+
+      req["user"] = user;
+      console.log(user);
+      next();
+    })
+  }
 
   app.get("/api/test", (_, res) => {
     res.json({ ok: true });
   });
 
-  app.get("/api/projects", getProjects);
-  app.get("/api/project/:id", getProject);
-  app.post("/api/project", createProject);
-  app.get("/api/myprojects/:userId", getUserProjects);
-  app.get("/api/exploreprojects/:userId", getExploreProjects);
+  app.get("/api/projects", protectedRoute, getProjects);
+  app.get("/api/project/:id", protectedRoute, getProject);
+  app.post("/api/project", protectedRoute, createProject);
+  app.get("/api/myprojects/:userId", protectedRoute, getUserProjects);
+  app.get("/api/exploreprojects/:userId", protectedRoute, getExploreProjects);
 
-  app.get("/api/tasks", getTasks);
-  app.get("/api/task/:id", getTask);
-  app.post("/api/task", createTask);
+  app.get("/api/tasks", protectedRoute, getTasks);
+  app.get("/api/task/:id", protectedRoute, getTask);
+  app.post("/api/task", protectedRoute, createTask);
+
+  app.get("/api/user/:id", protectedRoute, getUser);
+  app.put("/api/user/:id", protectedRoute, editUser);
+  app.delete("/api/task/:id", protectedRoute, deleteUser);
 
   /**
-   * Get user
-   */
-  app.get("/api/user/:id", getUser);
-  
-  /**
-   * Register user
-   */
+ * Register user
+ */
   app.post("/api/register", registerUser);
 
   /**
    * Login user
    */
   app.post("/api/login", loginUser);
-
-  app.put("/api/user/:id", editUser);
-  app.delete("/api/task/:id", deleteUser);
 
   app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     res.status(500);
