@@ -50,7 +50,7 @@ export const getApp = async () => {
 
   app.get("/api/tasks", getTasks);
   app.get("/api/task/:id", getTask);
-  app.post("/api/project/:projectId/task", createTask); // doesn'T work yet on insomnia
+  app.post("/api/project/:projectId/task", createTask); // test with insomnia work
   app.delete("/api/project/:projectId/task/:taskId", deleteTask);
   app.get("/api/taskTeam/:taskId/member", getTaskTeam);
   app.post("/api/taskTeam/:taskId/member/:userId", addTaskMember);
