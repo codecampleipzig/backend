@@ -22,27 +22,27 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
   try {
     const body = req.body;
     const projectId = req.params.projectId;
+    const sectionId = body.sectionId;
     const title = body.taskTitle;
     const description = body.taskDescription;
     const status = body.taskStatus;
     const creator = parseInt(body.taskCreator);
     const menuSection = body.menuSection;
 
-    if (!title || !description || !status || Number.isNaN(creator) || !menuSection) {
+    if (!sectionId || !title || !description || !status || Number.isNaN(creator) || !menuSection) {
       throw new Error("Not a valid task");
     }
 
     await query(
-      `INSERT INTO tasks(project_id, task_title, task_description, task_status, task_creator, menu_section) 
-      VALUES($1, $2, $3, $4, $5, $6)`,
-      [projectId, title, description, status, creator, menuSection],
+      `INSERT INTO tasks(project_id, section_id, task_title, task_description, task_status, task_creator, menu_section) 
+      VALUES($1, $2, $3, $4, $5, $6, $7)`,
+      [projectId, sectionId, title, description, status, creator, menuSection],
     );
     res.status(201).send({ status: "ok" });
   } catch (error) {
     next(error);
   }
 };
-
 
 /**
  * updateTask's status with taskStatus is set in the body.

@@ -97,8 +97,7 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
     const sections = await query(`SELECT * FROM sections WHERE project_id = $1`, [req.params.projectId]);
     project.rows[0].projectSections = [];
 
-    for (let section of sections.rows) {
-
+    for (const section of sections.rows) {
       // Get Section Creator and replace it in element
       const sectionCreatorId = section.sectionCreator;
       const sectionCreator = await query(
@@ -111,7 +110,9 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
       const tasks = await query(
         `SELECT * from tasks 
         WHERE section_id = $1 
-        ORDER BY task_status DESC`, [section.sectionId]);
+        ORDER BY task_status DESC`,
+        [section.sectionId],
+      );
       // Create empty array in every task
       for (let i = 0; i < tasks.rows.length; i++) {
         tasks.rows[i].taskTeam = [];
@@ -134,7 +135,6 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
 
       // Put element into projectSections
       project.rows[0].projectSections.push(section);
-
     }
 
     if (project.rows.length == 1) {
