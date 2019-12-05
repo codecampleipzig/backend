@@ -35,7 +35,7 @@ VALUES
 INSERT INTO sections (project_id, section_title, section_description, section_due, section_status, section_creator)
 VALUES 
 (1, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 1),
-(1, 'Kick Off 2', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
+(1, 'Kick Off 2', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-24', 'open', 2),
 (2, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
 (3, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
 (4, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
@@ -44,7 +44,7 @@ VALUES
 (7, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
 (8, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
 (9, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
-(10, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2),
+(10, 'Kick Off', 'Let''s get it started. Plan your first tasks and create a new section for furder steps! Keep it clear what the current walk is about.', '2019-12-13', 'open', 2);
 
 INSERT INTO tasks (project_id, section_id, task_title, task_description, task_status, task_creator)
 VALUES 

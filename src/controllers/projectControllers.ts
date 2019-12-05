@@ -73,10 +73,10 @@ async function searchForProjects(searchTermQueryParam: string, limit: number, of
 
 export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // Get Project
+    // Get Project from db
     const project = await query("SELECT * from projects WHERE project_id = $1", [req.params.projectId]);
 
-    // Get Project Creator and replace it in project
+    // Get Project Creator from db and replace ID with actual infos in project object
     const projectCreatorId = project.rows[0].projectCreator;
     const projectCreator = await query(
       "SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from users u WHERE user_id = $1",
@@ -84,7 +84,7 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
     );
     project.rows[0].projectCreator = projectCreator.rows[0];
 
-    // Get project Team and append to project
+    // Get projectTeam from db and append to project object
     const projectTeam = await query(
       `SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from user_project up 
       JOIN users u ON up.user_id = u.user_id
@@ -93,26 +93,45 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
     );
     project.rows[0].projectTeam = projectTeam.rows;
 
-    // Get Tasks and tasksTeams and append to project
-    const tasks = await query(`SELECT * from tasks WHERE project_id = $1`, [req.params.projectId]);
-    // Create empty array in every task
-    for (let i = 0; i < tasks.rows.length; i++) {
-      tasks.rows[i].taskTeam = [];
+    // Get Sections and add to project object
+    const sections = await query(`SELECT * FROM sections WHERE project_id = $1`, [req.params.projectId]);
+    project.rows[0].projectSections = [];
+
+    for (let section of sections.rows) {
+
+      // Get Section Creator and replace it in element
+      const sectionCreatorId = section.sectionCreator;
+      const sectionCreator = await query(
+        "SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from users u WHERE user_id = $1",
+        [sectionCreatorId],
+      );
+      section.sectionCreator = sectionCreator.rows[0];
+
+      // Get Tasks and tasksTeams and append to element
+      const tasks = await query(`SELECT * from tasks WHERE section_id = $1 `, [section.sectionId]);
+      // Create empty array in every task
+      for (let i = 0; i < tasks.rows.length; i++) {
+        tasks.rows[i].taskTeam = [];
+      }
+      const tasksTeams = await query(
+        `SELECT t.task_id, u.user_id, u.user_name, u.user_email, u.user_image_url from tasks t
+        JOIN user_task ut ON t.task_id = ut.task_id
+        JOIN users u ON u.user_id = ut.user_id
+        WHERE section_id = $1`,
+        [section.sectionId],
+      );
+      // Loop through tasks and put every user by task into element
+      tasksTeams.rows.forEach(teamElement => {
+        const { taskId } = teamElement;
+        delete teamElement.taskId;
+        tasks.rows.find(t => t.taskId == taskId).taskTeam.push(teamElement);
+      });
+      section.projectTasks = tasks.rows;
+
+      // Put element into projectSections
+      project.rows[0].projectSections.push(section);
+
     }
-    const tasksTeams = await query(
-      `SELECT t.task_id, u.user_id, u.user_name, u.user_email, u.user_image_url from tasks t
-      JOIN user_task ut ON t.task_id = ut.task_id
-      JOIN users u ON u.user_id = ut.user_id
-      WHERE project_id = $1`,
-      [req.params.projectId],
-    );
-    // Loop through tasks and put every user by task into projectTasks
-    tasksTeams.rows.forEach(element => {
-      const { taskId } = element;
-      delete element.taskId;
-      tasks.rows.find(t => t.taskId == taskId).taskTeam.push(element);
-    });
-    project.rows[0].projectTasks = tasks.rows;
 
     if (project.rows.length == 1) {
       res.send({ project: project.rows[0] });
@@ -137,7 +156,7 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
       throw new Error("Not a valid project");
     }
 
-    // TODO: Create new Inital Section
+    // TODO: Create new empty initial Section
 
     await query(
       `INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) 
