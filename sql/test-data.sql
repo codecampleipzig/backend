@@ -51,7 +51,7 @@ VALUES
 (1, 1, 'Get Djs', 'ask Mariana and Lena to dj', 'open', 1),
 (1, 1, 'Order Champagne', 'make everyone happy. and ask Lena where to find the best Champagen in town', 'closed', 12),
 (1, 1, 'Buy a lot of Burger', 'Make everyone very happy. buy the best burger in town, but ask Gabe where to find them, because he knows', 'open', 7),
-(2, 3, 'Book the flight', 'look or the cheapest flights', 'delete', '9'),
+(2, 3, 'Book the flight', 'look or the cheapest flights', 'deleted', '9'),
 (2, 3, 'Plan food', 'go through the most delicios receipts and look at all the picture and be excited for the food', 'open', 11),
 (4, 5, 'Find location for music classes', 'Contact facilities around town that might be willing to share their free space', 'closed', 1),
 (4, 5, 'Organize around getting instruments', 'Ask people for donations of their once-loved but no-longer-used musical instruments', 'open', 5),
@@ -63,7 +63,7 @@ VALUES
 (7, 8, 'Buy Christmas trees and distribute them to needy individuals', 'spread hope and joy by giving Christmas trees to families in need. We are just neighbors helping neighbors, building a little community and spreading good cheer in the process. Want to join the Santas?', 'open', 12),
 (7, 8, 'Hold a fundraiser.', 'Find bands willing to perform sing-alongs. Christmas caroling has never been this much fun!', 'open', 15),
 (8, 9, 'Form a planning committee for preliminary decisions', 'Identify and invite leaders within the community and other interested people to an organizational meeting and social gathering.', 'open', 1),
-(8, 9, 'Choose a name for the garden.', 'Create a prioritized budget and a wish list of desired donations and update it regularly', 'open', 5),
+(8, 9, 'Choose a name for the garden.', 'Create a prioritized budget and a wish list of desired donations and update it regularly', 'deleted', 5),
 (8, 9, 'Decide on the scope of garden including the size and the components', 'Make management decisions including whether there will be any restrictions on the use of pesticides and fertilizers. ', 'open', 13),
 (9, 10, 'Check in donors as they arrive at the drive.', 'Find bands willing to perform sing-alongs. Christmas caroling has never been this much fun!', 'open', 15),
 (10, 11, 'Ask businesses for their leftovers.', 'Try finding philanthropic restaurants and ask them if you can use their kitchen to prepare meals when they are closed', 'open', 7);
