@@ -18,12 +18,23 @@ CREATE TABLE IF NOT EXISTS projects (
   project_creator integer REFERENCES users(user_id) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS sections (
+  section_id serial NOT NULL PRIMARY KEY,
+  project_id integer REFERENCES projects(project_id) NOT NULL,
+  section_title varchar NOT NULL,
+  section_description varchar NOT NULL,
+  section_due date, -- TODO: NOT NULL if implemented
+  section_status varchar NOT NULL DEFAULT 'open',
+  section_creator integer REFERENCES users(user_id) NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS 
   projects_lower_project_title_idx ON projects (lower(project_title));
 
 CREATE TABLE IF NOT EXISTS tasks (
   task_id serial NOT NULL PRIMARY KEY,
   project_id integer REFERENCES projects(project_id) NOT NULL,
+  section_id INTEGER REFERENCES sections(section_id) NOT NULL,
   task_title varchar NOT NULL,
   task_description varchar,
   task_status varchar NOT NULL DEFAULT 'open',
@@ -32,8 +43,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   task_closed_by integer REFERENCES users(user_id),
   task_closed_date timestamp,
   task_deleted_by integer,
-  task_deleted_date timestamp,
-  menu_section varchar NOT NULL
+  task_deleted_date timestamp
 );
 
 CREATE TABLE IF NOT EXISTS user_task (
