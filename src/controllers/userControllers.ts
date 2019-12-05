@@ -1,15 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { query } from "./../db";
 import { QueryResult } from "pg";
-// import { bcrypt } from "bcryptjs";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { users } from "../mockdata";
-import { User } from "src/datatypes/User";
-
-// Generate private key with jwt using the following command in node:
-// require('crypto').randomBytes(64).toString('hex')
-export const secret = "fbf50189319aa851c000ded939929376c7fdfc040993c6ebf71477baf6c008ea09dcb041616358c001b7230f6f06b6d46b006c26f154e50a6f160caaf30f7a42";
+import { User } from "./../datatypes/User";
+import { secret } from "./../configuration/index";
 
 export const getUser = (req: Request, res: Response) => {
   const id = req.params.id;
@@ -26,22 +22,24 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
       return res.status(400).send({ message: "Username, email or password required." });
     }
 
-    const usernameRegex = RegExp("regular expression");
-    const emailRegex = RegExp("regular expression");
+    // TODO: Check for expected value in name, email and password - valid data format
+    const usernameRegex = RegExp("^[^\\d\\s](\\S+ ){0,1}\\S+$");
+    const emailRegex = RegExp("^(([^<>()\\[\\]\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$");
     const passwordRegex = RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&].{8,}");
 
-    // TODO: Check for expected value in name, email and password - valid data format
-    // name: string containing letters, numbers?, special characters?
-    // if (!usernameRegex.test(username)) {
-    //   console.log(`Username: ${username} does not match the username regex ${usernameRegex}`);
-    // }
+    if (!usernameRegex.test(username)) {
+      console.log(username);
+      return res.status(400).send({ message: `Username: ${username} must contain at least two characters, no number at the beginning and no whitespace around.` });
+    }
 
     // email: standard email format validation a@a.a
+    if (!emailRegex.test(email)) {
+      return res.status(400).send({ message: `Email address ${email} must have valid email address format.` });
+    }
 
-    // password: Your password must contain an uppercase, a lowercase, a special character and a number.
     if (!passwordRegex.test(password)) {
       console.log(`Password: ${password} does not match the password regex ${passwordRegex}`);
-      return res.sendStatus(400);
+      return res.status(400).send({ message: "Password must contain an uppercase, a lowercase, a special character and a number." })
     }
 
     // TODO: Don't we have to have Confirm Password field on Register form?
@@ -123,7 +121,6 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
   else {
     // If entered password matches, return success and set access token 
     // Authorization
-
     const user = mapToJwtUserModel(dbUser);
 
     const accessToken: string = jwt.sign(user, secret);

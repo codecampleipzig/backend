@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { json, urlencoded } from "body-parser";
 import cors from "cors";
 import * as jwt from "jsonwebtoken";
+import { secret } from "./configuration/index";
 
 import {
   createProject,
@@ -11,7 +12,7 @@ import {
   getUserProjects,
   getExploreProjects,
 } from "./controllers/projectControllers";
-import { secret, getUser, registerUser, loginUser, editUser, deleteUser } from "./controllers/userControllers";
+import { getUser, registerUser, loginUser, editUser, deleteUser } from "./controllers/userControllers";
 import { getTasks, getTask, createTask } from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 
@@ -31,8 +32,6 @@ export const getApp = async () => {
     // If yes, extract user data from Authorization
     const accessToken = authHeader && authHeader.split(" ")[1];
     // If no token value, send status unauthorized 401
-    console.log(`Access token is: ${accessToken}`);
-    console.log(`NOT Access token is: ${!accessToken}`);
     if (!accessToken) {
       return res.sendStatus(401);
     }
@@ -40,11 +39,6 @@ export const getApp = async () => {
     jwt.verify(accessToken, secret, (err, user) => {
       // If error in token verification, send status forbidden 403
       if (err) return res.sendStatus(403);
-      //.status(403).send({ message: `After jwt verify ${err}` }) 
-      // OK, WORKING LIKE THIS WHEN AUTHORIZATION HEADER HAS EMPTY VALUE
-      // OK, WORKING LIKE THIS WHEN AUTHORIZATION HEADER HAS INCORRECT VALUE
-
-      // .sendStatus(403);
 
       req["user"] = user;
       console.log(user);

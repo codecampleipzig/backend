@@ -18,10 +18,10 @@ async function auth() {
   const response = await request(app)
     .post("/api/login")
     .send({
-      email: 'deepBeutifulSea@gmail.com',
+      email: 'MolleMorallo@gmail.com',
       password: '!.Ba1234:!'
     });
-  // TODO: take token from response - low prio
+  // TODO: take token from response?
   token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIwLCJ1c2VyTmFtZSI6IlJlZzEiLCJ1c2VyRW1haWwiOiJyZWcxQHJlZy5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCQ2bjhOOUs4cHBxT3JqZFhsalNJcU8uVThoNmxuTDY5Ry80QzFXZi41U3RIMVNTd2xHTkU0VyIsInVzZXJJbWFnZVVybCI6bnVsbCwiam9pbkRhdGUiOiIyMDE5LTEyLTA0VDE0OjUxOjIwLjEwM1oiLCJsZWF2ZURhdGUiOm51bGwsImlhdCI6MTU3NTQ3NDkxOX0.nrHFu4PhmpNTShq909qNj8geVBACB5XWDhT2OSgkxlY";
 }
 
