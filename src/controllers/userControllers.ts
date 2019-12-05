@@ -41,11 +41,11 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 export const editUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id;
-    const { user_name, user_email, user_image_url } = req.body;
+    const { userName, userEmail, userImageUrl } = req.body;
     const dbResponse = await query(
       `UPDATE users SET user_name = $1, user_email = $2, user_image_url = $3
       WHERE user_id = $3 Returning *`,
-      [user_name, user_email, user_image_url, id],
+      [userName, userEmail, userImageUrl, id],
     );
     res.send({ users: dbResponse.rows[0] });
   } catch (error) {
@@ -55,9 +55,9 @@ export const editUser = async (req: Request, res: Response, next: NextFunction) 
 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user_id = req.params.id;
-    const dbResponse = await query(`DELETE FROM users WHERE user_id = $1 RETURNING id`, [user_id]);
-    res.send({ user_id });
+    const userId = req.params.id;
+    const dbResponse = await query(`DELETE FROM users WHERE user_id = $1 RETURNING id`, [userId]);
+    res.send({ userId });
   } catch (error) {
     next(error);
   }

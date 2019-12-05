@@ -1,17 +1,7 @@
 import request from "supertest";
 import { getApp } from "./app";
 
-describe("/api/test", () => {
-  it("works", async () => {
-    const app = await getApp();
-    const res = await request(app).get("/api/test");
-    const { ok } = res.body;
-    expect(res.status).toEqual(200);
-    expect(ok).toEqual(true);
-  });
-});
-
-describe("/api/projects", () => {
+xdescribe("/api/projects", () => {
   it("Returns some example projects", async () => {
     const app = await getApp();
     const res = await request(app).get("/api/projects");
@@ -77,5 +67,52 @@ describe("/api/projects", () => {
     const res = await request(app).get("/api/projects?searchTerm=Plan&limit=1&offset=a");
     expect(res.body.projects).toBeFalsy();
     expect(res.status).toBe(400);
+  });
+});
+
+xdescribe("/api/project", () => {
+  it("should create a new project", async () => {
+    const app = await getApp();
+    const res = await request(app)
+      .post("/api/project")
+      .send({
+        projectTitle: "Project B",
+        projectImageURL: "./../assets/project-default.png",
+        projectDescription:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        projectGoal: "Save the world",
+        projectStatus: "open",
+        projectCreator: 5,
+      });
+    expect(res.status).toEqual(201);
+    expect(res.body).toHaveProperty("post");
+  });
+});
+
+xdescribe("/api/project/:projectId/task", () => {
+  it("should create a new task", async () => {
+    const app = await getApp();
+    const res = await request(app)
+      .post("/api/project/:projectId/task")
+      .send({
+        projectId: 1,
+        taskTitle: "Our first task",
+        taskDescription:
+          "Recruit some team members. And here some more, to fill up your page: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        taskStatus: "open",
+        taskCreator: 3,
+        menuSection: "starter",
+      });
+    expect(res.status).toEqual(201);
+    expect(res.body).toHaveProperty("post");
+  });
+});
+
+xdescribe("/api/myprojects/:userId", () => {
+  it("should return an Array of users Projects", async () => {
+    const app = await getApp();
+    const res = await request(app).get("/api/myprojects/:userId");
+    expect(res.body.projects).toBeTruthy();
+    expect(res.body.projects.length).toBeGreaterThan(0);
   });
 });

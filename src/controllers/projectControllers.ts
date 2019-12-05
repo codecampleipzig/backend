@@ -3,6 +3,37 @@ import { query } from "../db";
 import { QueryResult } from "pg";
 import { Project } from "src/datatypes/Project";
 
+function calculateSqlParamValue(param: string) {
+  return `%${param}%`.toLowerCase();
+}
+
+async function searchForProjects(searchTermQueryParam: string, limit: number, offset: number) {
+  let dbResponse: QueryResult<Project>;
+  function specifyPagination(limit: number, offset: number) {
+    return `LIMIT ${limit} OFFSET ${offset}`;
+  }
+  if (!searchTermQueryParam) {
+    dbResponse = await query("SELECT * from projects");
+  } else {
+    const searchTermQueryParamToArray = searchTermQueryParam.split(" ");
+
+    let queryString = "SELECT * from projects";
+    for (let i = 0; i < searchTermQueryParamToArray.length; i++) {
+      let queryCondition;
+      if (i == 0) {
+        queryCondition = ` WHERE LOWER(project_title) LIKE $${i + 1}`;
+      } else {
+        queryCondition = ` AND LOWER(project_title) LIKE $${i + 1}`;
+      }
+      queryString = queryString + queryCondition;
+      searchTermQueryParamToArray[i] = calculateSqlParamValue(searchTermQueryParamToArray[i]);
+    }
+
+    dbResponse = await query(queryString + specifyPagination(limit, offset), searchTermQueryParamToArray);
+  }
+  return dbResponse;
+}
+
 export const getProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const searchTermQueryParam = req.query.searchTerm;
@@ -38,38 +69,6 @@ export const getProjects = async (req: Request, res: Response, next: NextFunctio
     next(error);
   }
 };
-
-async function searchForProjects(searchTermQueryParam: string, limit: number, offset: number) {
-  let dbResponse: QueryResult<Project>;
-  if (!searchTermQueryParam) {
-    dbResponse = await query("SELECT * from projects");
-  } else {
-    const searchTermQueryParamToArray = searchTermQueryParam.split(" ");
-
-    let queryString = "SELECT * from projects";
-    for (let i = 0; i < searchTermQueryParamToArray.length; i++) {
-      let queryCondition;
-      if (i == 0) {
-        queryCondition = ` WHERE LOWER(project_title) LIKE $${i + 1}`;
-      } else {
-        queryCondition = ` AND LOWER(project_title) LIKE $${i + 1}`;
-      }
-      queryString = queryString + queryCondition;
-      searchTermQueryParamToArray[i] = calculateSqlParamValue(searchTermQueryParamToArray[i]);
-    }
-
-    dbResponse = await query(queryString + specifyPagination(limit, offset), searchTermQueryParamToArray);
-  }
-  return dbResponse;
-
-  function calculateSqlParamValue(param: string) {
-    return `%${param}%`.toLowerCase();
-  }
-
-  function specifyPagination(limit: number, offset: number) {
-    return `LIMIT ${limit} OFFSET ${offset}`;
-  }
-}
 
 export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -143,6 +142,7 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+// Test with insomnia works
 export const createProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body = req.body;
@@ -156,7 +156,7 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
       throw new Error("Not a valid project");
     }
 
-    // TODO: Create new empty initial Section
+    // TODO: Create new empty initial Section??
 
     await query(
       `INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) 
@@ -169,6 +169,7 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+//
 export const getUserProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.userId;
@@ -194,21 +195,6 @@ export const getExploreProjects = async (req: Request, res: Response, next: Next
       (SELECT * from user_project
         WHERE project_id = projects.project_id AND user_id = $1)`,
       [id],
-    );
-    res.send({ projects: dbResponse.rows });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getProjectTeam = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const project_id = req.params.projectId;
-    const dbResponse = await query(
-      `SELECT project.project_id, user.user_id, user.user_name, user.user_mail, user_image_url FROM users
-      JOIN project_user on project_user.user_id = user.user_id
-      JOIN project on project_user.project_id = $1 RETURNING *`,
-      [project_id],
     );
     res.send({ projects: dbResponse.rows });
   } catch (error) {
@@ -243,20 +229,6 @@ export const deleteTeamMember = async (req: Request, res: Response, next: NextFu
     );
 
     next();
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getProjectTasks = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const project_id = req.params.projectId;
-    const dbResponse = await query(
-      `SELECT project.project_id, task_title, task_description, task_status, task_creator, task_init_date, menu_section FROM tasks
-      JOIN project on project.project_id = $1`,
-      [project_id],
-    );
-    res.send({ tasks: dbResponse.rows });
   } catch (error) {
     next(error);
   }
