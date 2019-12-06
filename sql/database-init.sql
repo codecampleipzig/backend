@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS sections (
   section_description varchar NOT NULL,
   section_due date, -- TODO: NOT NULL if implemented
   section_status varchar NOT NULL DEFAULT 'open',
-  section_creator integer REFERENCES users(user_id) NOT NULL
+  section_creator integer REFERENCES users(user_id) NOT NULL,
+  section_init_date timestamp NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS 

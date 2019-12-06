@@ -93,7 +93,7 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
     project.rows[0].projectTeam = projectTeam.rows;
 
     // Get Sections and add to project object
-    const sections = await query(`SELECT * FROM sections WHERE project_id = $1`, [req.params.projectId]);
+    const sections = await query(`SELECT * FROM sections WHERE project_id = $1 ORDER BY section_init_date DESC`, [req.params.projectId]);
     project.rows[0].projectSections = [];
 
     for (let section of sections.rows) {

@@ -15,6 +15,7 @@ import {
 import { getUser, registerUser, editUser, deleteUser } from "./controllers/userControllers";
 import { createTask, addTaskMember, deleteTaskMember, updateTask } from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
+import { createSection } from "./controllers/sectionControllers";
 
 export const getApp = async () => {
   const app = express();
@@ -35,6 +36,10 @@ export const getApp = async () => {
     .route("/api/projectTeam/:projectId/member/:userId")
     .put(addTeamMember, getProject)
     .delete(deleteTeamMember, getProject);
+
+  app
+    .route("/api/project/:projectId/section")
+    .post(createSection, getProject)
 
   app.post("/api/project/:projectId/task", createTask); // test with insomnia works
   app.route("/api/task/:taskId").patch(updateTask, getProject);
