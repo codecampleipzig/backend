@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS projects (
   project_id serial NOT NULL PRIMARY KEY,
   project_title varchar NOT NULL UNIQUE,
   project_image_url varchar NOT NULL,
-  project_description varchar NOT NULL,
-  project_goal varchar NOT NULL,
+  project_description text NOT NULL,
+  project_goal text NOT NULL,
   project_status varchar NOT NULL DEFAULT 'open',
   project_creator integer REFERENCES users(user_id) NOT NULL
 );
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS sections (
   section_id serial NOT NULL PRIMARY KEY,
   project_id integer REFERENCES projects(project_id) NOT NULL,
   section_title varchar NOT NULL,
-  section_description varchar NOT NULL,
+  section_description text NOT NULL,
   section_due date, -- TODO: NOT NULL if implemented
   section_status varchar NOT NULL DEFAULT 'open',
   section_creator integer REFERENCES users(user_id) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   project_id integer REFERENCES projects(project_id) NOT NULL,
   section_id INTEGER REFERENCES sections(section_id) NOT NULL,
   task_title varchar NOT NULL,
-  task_description varchar,
+  task_description text,
   task_status varchar NOT NULL DEFAULT 'open',
   task_creator integer REFERENCES users(user_id) NOT NULL,
   task_init_date timestamp NOT NULL DEFAULT NOW(),
