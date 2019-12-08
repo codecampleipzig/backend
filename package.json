@@ -8,7 +8,7 @@
     "start": "NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js .",
     "start:dev": "node -r dotenv/config -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
     "dev": "nodemon",
-    "test:unit": "jest",
+    "test:unit": "jest --run-in-band",
     "test:lint": "eslint --ext .ts ./src",
     "test:lint:fix": "npm run test:lint -- --fix",
     "test": "npm run test:lint && npm run test:unit"
@@ -39,7 +39,6 @@
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
     "@types/pg": "^7.11.2",
-    "bcrypt": "^3.0.7",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",

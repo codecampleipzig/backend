@@ -1,5 +1,12 @@
 import request from "supertest";
 import { getApp } from "./app";
+import { db } from "./db";
+
+afterAll(async(done) => {
+  await db.end();
+  console.log ("Shutdown Done");
+  done();
+})
 
 describe("/api/test", () => {
   it("works", async () => {
@@ -11,7 +18,7 @@ describe("/api/test", () => {
   });
 });
 
-let token = 'empty';
+let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIwLCJ1c2VyTmFtZSI6IlJlZzEiLCJ1c2VyRW1haWwiOiJyZWcxQHJlZy5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCQ2bjhOOUs4cHBxT3JqZFhsalNJcU8uVThoNmxuTDY5Ry80QzFXZi41U3RIMVNTd2xHTkU0VyIsInVzZXJJbWFnZVVybCI6bnVsbCwiam9pbkRhdGUiOiIyMDE5LTEyLTA0VDE0OjUxOjIwLjEwM1oiLCJsZWF2ZURhdGUiOm51bGwsImlhdCI6MTU3NTQ3NDkxOX0.nrHFu4PhmpNTShq909qNj8geVBACB5XWDhT2OSgkxlY";
 
 async function auth() {
   const app = await getApp();
@@ -24,10 +31,6 @@ async function auth() {
   // TODO: take token from response?
   token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIwLCJ1c2VyTmFtZSI6IlJlZzEiLCJ1c2VyRW1haWwiOiJyZWcxQHJlZy5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCQ2bjhOOUs4cHBxT3JqZFhsalNJcU8uVThoNmxuTDY5Ry80QzFXZi41U3RIMVNTd2xHTkU0VyIsInVzZXJJbWFnZVVybCI6bnVsbCwiam9pbkRhdGUiOiIyMDE5LTEyLTA0VDE0OjUxOjIwLjEwM1oiLCJsZWF2ZURhdGUiOm51bGwsImlhdCI6MTU3NTQ3NDkxOX0.nrHFu4PhmpNTShq909qNj8geVBACB5XWDhT2OSgkxlY";
 }
-
-beforeEach(() => {
-  auth();
-});
 
 describe("/api/projects", () => {
   it("Returns some example projects", async () => {
@@ -110,5 +113,4 @@ describe("/api/projects", () => {
     expect(res.body.projects).toBeFalsy();
     expect(res.status).toBe(400);
   });
-
 });

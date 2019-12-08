@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { query } from "./../db";
 import { QueryResult } from "pg";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import { users } from "../mockdata";
 import { User } from "./../datatypes/User";
