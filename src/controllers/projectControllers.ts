@@ -148,11 +148,11 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
     const body = req.body;
     const title = body.projectTitle;
     const description = body.projectDescription;
-    const imageageUrl = body.projectImageageUrl;
+    const imageUrl = body.projectImageUrl;
     const goal = body.projectGoal;
     const creator = parseInt(body.projectCreator);
 
-    if (!title || !description || !imageageUrl || !goal || Number.isNaN(creator)) {
+    if (!title || !description || !imageUrl || !goal || Number.isNaN(creator)) {
       throw new Error("Not a valid project");
     }
 
@@ -161,7 +161,7 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
     await query(
       `INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) 
       VALUES($1, $2, $3, $4, $5) RETURNING *`,
-      [title, description, imageageUrl, goal, creator],
+      [title, description, imageUrl, goal, creator],
     );
     res.status(201).send({ status: "ok" });
   } catch (error) {

@@ -8,7 +8,7 @@ import { secret } from "./../configuration/index";
 
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const dbResponse = await query(`SELECT * from users WHERE user_id = $1`, [req.params.id]);
+    const dbResponse = await query(`SELECT * from users WHERE user_id = $1`, [req.params.userId]);
     if (dbResponse.rows.length == 1) {
       res.send({ project: dbResponse.rows[0] });
     } else {
@@ -142,7 +142,7 @@ function mapToJwtUserModel(dbUser: any): User {
     userId: dbUser.userId,
     userName: dbUser.userName,
     userEmail: dbUser.userEmail,
-    userImageageUrl: dbUser.userImageUrl
+    userImageUrl: dbUser.userImageUrl
   };
 
   return user;
@@ -150,7 +150,7 @@ function mapToJwtUserModel(dbUser: any): User {
 
 export const editUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = req.params.id;
+    const id = req.params.userId;
     const { userName, userEmail, userImageUrl } = req.body;
     const dbResponse = await query(
       `UPDATE users SET user_name = $1, user_email = $2, user_image_url = $3
@@ -165,10 +165,7 @@ export const editUser = async (req: Request, res: Response, next: NextFunction) 
 
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userId = req.params.id;
-    if (userId != req['user'].userId) {
-      return res.send
-    }
+    const userId = req.params.userId;
     const dbResponse = await query(`DELETE FROM users WHERE user_id = $1 RETURNING id`, [userId]);
     res.send({ userId });
   } catch (error) {

@@ -46,26 +46,38 @@ export const getApp = async () => {
     })
   }
 
+  // To be added on to protectedRoute and requires :userId to be part of req.params
+  const privateToUser = (req: Request, res: Response, next: NextFunction) => {
+    const routeUserId = req.params.userId;
+    const authUserId = req['user'] && req['user'].userId;
+    if (authUserId && routeUserId == authUserId) {
+      return next();
+    }
+    else {
+      res.send(403);
+    }
+  }
+
   app.get("/api/test", (_, res) => {
     res.json({ ok: true });
   });
 
   app.get("/api/projects", getProjects); // for searchbar
-  app.get("/api/project/:projectId", protectedRoute, getProject);
+  app.get("/api/project/:projectId", getProject);
   app.post("/api/project", protectedRoute, createProject); // test with insomnia works
-  app.get("/api/myprojects/:userId", protectedRoute, getUserProjects); // test with insomnia works
-  app.get("/api/exploreprojects/:userId", protectedRoute, getExploreProjects); // test with insomnia works
+  app.get("/api/myprojects/:userId", getUserProjects); // test with insomnia works
+  app.get("/api/exploreprojects/:userId", getExploreProjects); // test with insomnia works
   app
     .route("/api/projectTeam/:projectId/member/:userId")
-    .put(protectedRoute, addTeamMember, getProject)
-    .delete(protectedRoute, deleteTeamMember, getProject);
+    .put(protectedRoute, privateToUser, addTeamMember, getProject)
+    .delete(protectedRoute, privateToUser, deleteTeamMember, getProject);
 
   app.post("/api/project/:projectId/task", protectedRoute, createTask); // test with insomnia works
   app.route("/api/task/:taskId").patch(protectedRoute, updateTask, getProject);
   app
     .route("/api/taskTeam/:taskId/member/:userId")
-    .put(protectedRoute, addTaskMember, getProject)
-    .delete(protectedRoute, deleteTaskMember, getProject);
+    .put(protectedRoute, privateToUser, addTaskMember, getProject)
+    .delete(protectedRoute, privateToUser, deleteTaskMember, getProject);
 
   /**
  * Register user
@@ -76,9 +88,9 @@ export const getApp = async () => {
    * Login user
    */
   app.post("/api/login", loginUser);
-  app.get("/api/user/:id", protectedRoute, getUser);
-  app.put("/api/user/:id", protectedRoute, editUser);
-  app.delete("/api/user/:id", protectedRoute, deleteUser);
+  app.get("/api/user/:userId", protectedRoute, privateToUser, getUser);
+  app.put("/api/user/:userId", protectedRoute, privateToUser, editUser);
+  app.delete("/api/user/:userId", protectedRoute, privateToUser, deleteUser);
 
   app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     res.status(500);
