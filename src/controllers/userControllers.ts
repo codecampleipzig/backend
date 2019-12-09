@@ -142,7 +142,7 @@ function mapToJwtUserModel(dbUser: any): User {
     userId: dbUser.userId,
     userName: dbUser.userName,
     userEmail: dbUser.userEmail,
-    userImageURL: dbUser.userImageUrl
+    userImageageUrl: dbUser.userImageUrl
   };
 
   return user;
