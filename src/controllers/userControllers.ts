@@ -3,14 +3,20 @@ import { query } from "./../db";
 import { QueryResult } from "pg";
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
-import { users } from "../mockdata";
 import { User } from "./../datatypes/User";
 import { secret } from "./../configuration/index";
 
-export const getUser = (req: Request, res: Response) => {
-  const id = req.params.id;
-  const userId = users.find(user => user.userId == parseInt(id));
-  res.send({ userId });
+export const getUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const dbResponse = await query(`SELECT * from users WHERE user_id = $1`, [req.params.id]);
+    if (dbResponse.rows.length == 1) {
+      res.send({ project: dbResponse.rows[0] });
+    } else {
+      res.status(404).send({ error: "User not found" });
+    }
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -142,12 +148,30 @@ function mapToJwtUserModel(dbUser: any): User {
   return user;
 }
 
-export const editUser = (req: Request, res: Response) => {
-  const id = req.params.id;
-  res.send("PUT request to the userID " + id);
+export const editUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id;
+    const { userName, userEmail, userImageUrl } = req.body;
+    const dbResponse = await query(
+      `UPDATE users SET user_name = $1, user_email = $2, user_image_url = $3
+      WHERE user_id = $3 Returning *`,
+      [userName, userEmail, userImageUrl, id],
+    );
+    res.send({ users: dbResponse.rows[0] });
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const deleteUser = (req: Request, res: Response) => {
-  const id = req.params.id;
-  res.send("PUT request to taskId" + id);
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.params.id;
+    if (userId != req['user'].userId) {
+      return res.send
+    }
+    const dbResponse = await query(`DELETE FROM users WHERE user_id = $1 RETURNING id`, [userId]);
+    res.send({ userId });
+  } catch (error) {
+    next(error);
+  }
 };

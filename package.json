@@ -11,7 +11,7 @@
     "test:unit": "jest --run-in-band",
     "test:lint": "eslint --ext .ts ./src",
     "test:lint:fix": "npm run test:lint -- --fix",
-    "test": "npm run test:lint && npm run test:unit"
+    "test": "npm run test:unit"
   },
   "nodemonConfig": {
     "ignore": [
@@ -64,6 +64,7 @@
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-prettier": "^3.1.1",
     "jest": "^24.9.0",
+    "lint": "^0.7.0",
     "nodemon": "^1.19.4",
     "pg-testdb": "^1.0.4",
     "prettier": "^1.19.1",

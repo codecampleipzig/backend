@@ -3,6 +3,37 @@ import { query } from "../db";
 import { QueryResult } from "pg";
 import { Project } from "src/datatypes/Project";
 
+function calculateSqlParamValue(param: string) {
+  return `%${param}%`.toLowerCase();
+}
+
+async function searchForProjects(searchTermQueryParam: string, limit: number, offset: number) {
+  let dbResponse: QueryResult<Project>;
+  function specifyPagination(limit: number, offset: number) {
+    return `LIMIT ${limit} OFFSET ${offset}`;
+  }
+  if (!searchTermQueryParam) {
+    dbResponse = await query("SELECT * from projects");
+  } else {
+    const searchTermQueryParamToArray = searchTermQueryParam.split(" ");
+
+    let queryString = "SELECT * from projects";
+    for (let i = 0; i < searchTermQueryParamToArray.length; i++) {
+      let queryCondition;
+      if (i == 0) {
+        queryCondition = ` WHERE LOWER(project_title) LIKE $${i + 1}`;
+      } else {
+        queryCondition = ` AND LOWER(project_title) LIKE $${i + 1}`;
+      }
+      queryString = queryString + queryCondition;
+      searchTermQueryParamToArray[i] = calculateSqlParamValue(searchTermQueryParamToArray[i]);
+    }
+
+    dbResponse = await query(queryString + specifyPagination(limit, offset), searchTermQueryParamToArray);
+  }
+  return dbResponse;
+}
+
 export const getProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const searchTermQueryParam = req.query.searchTerm;
@@ -28,50 +59,81 @@ export const getProjects = async (req: Request, res: Response, next: NextFunctio
       return res.status(400).send({ message: "Offset has to be a non-negative number" });
     }
 
-    var dbResponse: QueryResult<Project> = await searchForProjects(searchTermQueryParam, limitParamNum, offsetParamNum);
+    const dbResponse: QueryResult<Project> = await searchForProjects(
+      searchTermQueryParam,
+      limitParamNum,
+      offsetParamNum,
+    );
     res.send({ projects: dbResponse.rows });
   } catch (error) {
     next(error);
   }
 };
 
-async function searchForProjects(searchTermQueryParam: string, limit: number, offset: number) {
-  var dbResponse: QueryResult<Project>;
-  if (!searchTermQueryParam) {
-    dbResponse = await query("SELECT * from projects");
-  } else {
-    const searchTermQueryParamToArray = searchTermQueryParam.split(" ");
-
-    let queryString = "SELECT * from projects";
-    for (let i = 0; i < searchTermQueryParamToArray.length; i++) {
-      let queryCondition;
-      if (i == 0) {
-        queryCondition = ` WHERE LOWER(project_title) LIKE $${i + 1}`;
-      } else {
-        queryCondition = ` AND LOWER(project_title) LIKE $${i + 1}`;
-      }
-      queryString = queryString + queryCondition;
-      searchTermQueryParamToArray[i] = calculateSqlParamValue(searchTermQueryParamToArray[i]);
-    }
-
-    dbResponse = await query(queryString + specifyPagination(limit, offset), searchTermQueryParamToArray);
-  }
-  return dbResponse;
-
-  function calculateSqlParamValue(param: string) {
-    return `%${param}%`.toLowerCase();
-  }
-
-  function specifyPagination(limit: number, offset: number) {
-    return `LIMIT ${limit} OFFSET ${offset}`;
-  }
-}
-
 export const getProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const dbResponse = await query("SELECT * from projects WHERE projectId = $1", [req.params.id]);
-    if (dbResponse.rows.length == 1) {
-      res.send({ project: dbResponse.rows[0] });
+    // Get Project from db
+    const project = await query("SELECT * from projects WHERE project_id = $1", [req.params.projectId]);
+
+    // Get Project Creator from db and replace ID with actual infos in project object
+    const projectCreatorId = project.rows[0].projectCreator;
+    const projectCreator = await query(
+      "SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from users u WHERE user_id = $1",
+      [projectCreatorId],
+    );
+    project.rows[0].projectCreator = projectCreator.rows[0];
+
+    // Get projectTeam from db and append to project object
+    const projectTeam = await query(
+      `SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from user_project up 
+      JOIN users u ON up.user_id = u.user_id
+      WHERE up.project_id = $1`,
+      [req.params.projectId],
+    );
+    project.rows[0].projectTeam = projectTeam.rows;
+
+    // Get Sections and add to project object
+    const sections = await query(`SELECT * FROM sections WHERE project_id = $1`, [req.params.projectId]);
+    project.rows[0].projectSections = [];
+
+    for (let section of sections.rows) {
+
+      // Get Section Creator and replace it in element
+      const sectionCreatorId = section.sectionCreator;
+      const sectionCreator = await query(
+        "SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from users u WHERE user_id = $1",
+        [sectionCreatorId],
+      );
+      section.sectionCreator = sectionCreator.rows[0];
+
+      // Get Tasks and tasksTeams and append to element
+      const tasks = await query(`SELECT * from tasks WHERE section_id = $1 `, [section.sectionId]);
+      // Create empty array in every task
+      for (let i = 0; i < tasks.rows.length; i++) {
+        tasks.rows[i].taskTeam = [];
+      }
+      const tasksTeams = await query(
+        `SELECT t.task_id, u.user_id, u.user_name, u.user_email, u.user_image_url from tasks t
+        JOIN user_task ut ON t.task_id = ut.task_id
+        JOIN users u ON u.user_id = ut.user_id
+        WHERE section_id = $1`,
+        [section.sectionId],
+      );
+      // Loop through tasks and put every user by task into element
+      tasksTeams.rows.forEach(teamElement => {
+        const { taskId } = teamElement;
+        delete teamElement.taskId;
+        tasks.rows.find(t => t.taskId == taskId).taskTeam.push(teamElement);
+      });
+      section.projectTasks = tasks.rows;
+
+      // Put element into projectSections
+      project.rows[0].projectSections.push(section);
+
+    }
+
+    if (project.rows.length == 1) {
+      res.send({ project: project.rows[0] });
     } else {
       res.status(404).send({ error: "Project not found" });
     }
@@ -80,6 +142,7 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+// Test with insomnia works
 export const createProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body = req.body;
@@ -93,8 +156,11 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
       throw new Error("Not a valid project");
     }
 
+    // TODO: Create new empty initial Section??
+
     await query(
-      "INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) VALUES($1, $2, $3, $4, $5)",
+      `INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) 
+      VALUES($1, $2, $3, $4, $5) RETURNING *`,
       [title, description, imageURL, goal, creator],
     );
     res.status(201).send({ status: "ok" });
@@ -103,6 +169,7 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+//
 export const getUserProjects = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.userId;
@@ -130,6 +197,38 @@ export const getExploreProjects = async (req: Request, res: Response, next: Next
       [id],
     );
     res.send({ projects: dbResponse.rows });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addTeamMember = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { projectId, userId } = req.params;
+
+    const dbResponse = await query(
+      `INSERT INTO user_project (project_id, user_id) 
+      VALUES ($1, $2)`,
+      [projectId, userId],
+    );
+    next();
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const deleteTeamMember = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { projectId, userId } = req.params;
+
+    const dbResponse = await query(
+      `DELETE FROM user_project up
+      WHERE up.project_id = $1 AND up.user_id = $2`,
+      [projectId, userId],
+    );
+
+    next();
   } catch (error) {
     next(error);
   }

@@ -4,16 +4,17 @@ import { json, urlencoded } from "body-parser";
 import cors from "cors";
 import * as jwt from "jsonwebtoken";
 import { secret } from "./configuration/index";
-
 import {
   createProject,
   getProjects,
   getProject,
   getUserProjects,
   getExploreProjects,
+  addTeamMember,
+  deleteTeamMember,
 } from "./controllers/projectControllers";
 import { getUser, registerUser, loginUser, editUser, deleteUser } from "./controllers/userControllers";
-import { getTasks, getTask, createTask } from "./controllers/taskControllers";
+import { createTask, addTaskMember, deleteTaskMember, updateTask } from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 
 export const getApp = async () => {
@@ -49,19 +50,22 @@ export const getApp = async () => {
     res.json({ ok: true });
   });
 
-  app.get("/api/projects", protectedRoute, getProjects);
-  app.get("/api/project/:id", protectedRoute, getProject);
-  app.post("/api/project", protectedRoute, createProject);
-  app.get("/api/myprojects/:userId", protectedRoute, getUserProjects);
-  app.get("/api/exploreprojects/:userId", protectedRoute, getExploreProjects);
+  app.get("/api/projects", getProjects); // for searchbar
+  app.get("/api/project/:projectId", protectedRoute, getProject);
+  app.post("/api/project", protectedRoute, createProject); // test with insomnia works
+  app.get("/api/myprojects/:userId", protectedRoute, getUserProjects); // test with insomnia works
+  app.get("/api/exploreprojects/:userId", protectedRoute, getExploreProjects); // test with insomnia works
+  app
+    .route("/api/projectTeam/:projectId/member/:userId")
+    .put(protectedRoute, addTeamMember, getProject)
+    .delete(protectedRoute, deleteTeamMember, getProject);
 
-  app.get("/api/tasks", protectedRoute, getTasks);
-  app.get("/api/task/:id", protectedRoute, getTask);
-  app.post("/api/task", protectedRoute, createTask);
-
-  app.get("/api/user/:id", protectedRoute, getUser);
-  app.put("/api/user/:id", protectedRoute, editUser);
-  app.delete("/api/task/:id", protectedRoute, deleteUser);
+  app.post("/api/project/:projectId/task", protectedRoute, createTask); // test with insomnia works
+  app.route("/api/task/:taskId").patch(protectedRoute, updateTask, getProject);
+  app
+    .route("/api/taskTeam/:taskId/member/:userId")
+    .put(protectedRoute, addTaskMember, getProject)
+    .delete(protectedRoute, deleteTaskMember, getProject);
 
   /**
  * Register user
@@ -72,6 +76,9 @@ export const getApp = async () => {
    * Login user
    */
   app.post("/api/login", loginUser);
+  app.get("/api/user/:id", protectedRoute, getUser);
+  app.put("/api/user/:id", protectedRoute, editUser);
+  app.delete("/api/user/:id", protectedRoute, deleteUser);
 
   app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     res.status(500);
