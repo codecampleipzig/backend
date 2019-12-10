@@ -158,12 +158,12 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
 
     // TODO: Create new empty initial Section??
 
-    await query(
+    const dbResponse = await query(
       `INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) 
-      VALUES($1, $2, $3, $4, $5) RETURNING *`,
+      VALUES($1, $2, $3, $4, $5)`,
       [title, description, imageUrl, goal, creator],
     );
-    res.status(201).send({ status: "ok" });
+    res.status(201).send({ projects : dbResponse.rows[0].project_id });
   } catch (error) {
     next(error);
   }
