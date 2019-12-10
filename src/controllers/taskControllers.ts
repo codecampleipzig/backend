@@ -33,7 +33,7 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
     }
 
     await query(
-      `INSERT INTO tasks(project_id, task_title, task_description, task_status, task_creator, menu_section) 
+      `INSERT INTO tasks(project_id, task_title, task_description, task_status, task_creator, section_id) 
       VALUES($1, $2, $3, $4, $5, $6)`,
       [projectId, title, description, status, creator, menuSection],
     );
