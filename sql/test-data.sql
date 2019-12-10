@@ -51,7 +51,7 @@ VALUES
 (1, 1, 'Get Djs', 'ask Mariana and Lena to dj', 'open', 1),
 (1, 1, 'Order Champagne', 'make everyone happy. and ask Lena where to find the best Champagen in town', 'closed', 12),
 (1, 1, 'Buy a lot of Burger', 'Make everyone very happy. buy the best burger in town, but ask Gabe where to find them, because he knows', 'open', 7),
-(2, 3, 'Book the flight', 'look or the cheapest flights', 'delete', '9'),
+(2, 3, 'Book the flight', 'look or the cheapest flights', 'deleted', '9'),
 (2, 3, 'Plan food', 'go through the most delicios receipts and look at all the picture and be excited for the food', 'open', 11),
 (4, 5, 'Find location for music classes', 'Contact facilities around town that might be willing to share their free space', 'closed', 1),
 (4, 5, 'Organize around getting instruments', 'Ask people for donations of their once-loved but no-longer-used musical instruments', 'open', 5),
