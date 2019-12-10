@@ -37,7 +37,7 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
       VALUES($1, $2, $3, $4, $5, $6)`,
       [projectId, title, description, status, creator, menuSection],
     );
-    res.status(201).send({ status: "ok" });
+    next();
   } catch (error) {
     next(error);
   }
