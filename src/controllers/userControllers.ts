@@ -19,6 +19,12 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
+/**
+ * Register user - user data validations, database check for non-existing user and returning user data and token in response
+ * @param req Request
+ * @param res Response
+ * @param next NextFunction
+ */
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Take user data from req.body
@@ -82,10 +88,9 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 
     // Return success response
     return res.send({
+      user,
       message: "User registered successfully",
-      token: accessToken,
-      username: user.userName,
-      email: user.userEmail
+      token: accessToken
     })
   }
   catch (error) {
@@ -93,6 +98,11 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
+/* Login user - user data validations, database check for existing user and returning user data and token in response
+ * @param req Request
+ * @param res Response
+ * @param next NextFunction
+ */
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   // Take user data from req.body
   const { email, password } = req.body;
@@ -131,6 +141,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 
     const accessToken: string = jwt.sign(user, secret);
     res.send({
+      user,
       message: "User logged in successfully.",
       token: accessToken
     });
