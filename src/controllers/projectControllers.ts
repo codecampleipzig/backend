@@ -155,9 +155,6 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
     if (!title || !imageUrl || !description  || !goal || !status || Number.isNaN(creator)) {
       res.status(500).send("Not a valid project");
     }
-    console.log("Halloe")
-
-    // TODO: Create new empty initial Section??
 
     const dbResponse = await query(
       `INSERT INTO projects(project_title, project_image_url, project_description, project_goal, project_status, project_creator) 
@@ -168,7 +165,7 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
     const projectId = dbResponse.rows[0].projectId;
 
     // add creator to project
-    const addCreatorToProject = await query(
+    await query(
       `INSERT INTO user_project (user_id, project_id)
       VALUES($1, $2) RETURNING *`,
       [creator, projectId]
