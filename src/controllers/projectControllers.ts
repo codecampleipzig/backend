@@ -151,28 +151,36 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-// Test with insomnia works
 export const createProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body = req.body;
-    const title = body.projectTitle;
-    const description = body.projectDescription;
-    const imageUrl = body.projectImageUrl;
-    const goal = body.projectGoal;
-    const creator = parseInt(body.projectCreator);
-
-    if (!title || !description || !imageUrl || !goal || Number.isNaN(creator)) {
-      throw new Error("Not a valid project");
+    const title = body.title;
+    const imageUrl = body.imageUrl;
+    const description = body.description;
+    const goal = body.goal;
+    const status = 'open';
+    const creator = parseInt(body.creator);
+    console.log(body)
+    if (!title || !imageUrl || !description  || !goal || !status || Number.isNaN(creator)) {
+      res.status(500).send("Not a valid project");
     }
 
-    // TODO: Create new empty initial Section??
-
-    await query(
-      `INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) 
-      VALUES($1, $2, $3, $4, $5) RETURNING *`,
-      [title, description, imageUrl, goal, creator],
+    const dbResponse = await query(
+      `INSERT INTO projects(project_title, project_image_url, project_description, project_goal, project_status, project_creator) 
+      VALUES($1, $2, $3, $4, $5, $6) RETURNING project_id`,
+      [title, imageUrl, description, goal, status, creator],
     );
-    res.status(201).send({ status: "ok" });
+
+    const projectId = dbResponse.rows[0].projectId;
+
+    // add creator to project
+    await query(
+      `INSERT INTO user_project (user_id, project_id)
+      VALUES($1, $2) RETURNING *`,
+      [creator, projectId]
+    );
+
+    res.send({projectId});
   } catch (error) {
     next(error);
   }

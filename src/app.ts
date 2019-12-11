@@ -75,7 +75,7 @@ export const getApp = async () => {
 
   app.get("/api/projects", getProjects); // for searchbar
   app.get("/api/project/:projectId", getProject);
-  app.post("/api/project", protectedRoute, createProject); // test with insomnia works
+  app.post("/api/project", createProject); // test with insomnia works
   app.get("/api/myprojects/:userId", getUserProjects); // test with insomnia works
   app.get("/api/exploreprojects/:userId", getExploreProjects); // test with insomnia works
   app
