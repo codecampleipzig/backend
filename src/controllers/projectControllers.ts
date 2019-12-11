@@ -142,7 +142,6 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-// Test with insomnia works
 export const createProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body = req.body;
@@ -165,8 +164,17 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
       VALUES($1, $2, $3, $4, $5, $6) RETURNING project_id`,
       [title, imageUrl, description, goal, status, creator],
     );
-      console.log("plsssss")
-    res.send(dbResponse.rows[0]);
+
+    const projectId = dbResponse.rows[0].projectId;
+
+    // add creator to project
+    const addCreatorToProject = await query(
+      `INSERT INTO user_project (user_id, project_id)
+      VALUES($1, $2) RETURNING *`,
+      [creator, projectId]
+    );
+
+    res.send({projectId});
   } catch (error) {
     next(error);
   }
