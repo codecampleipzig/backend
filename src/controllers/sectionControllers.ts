@@ -12,7 +12,7 @@ export const createSection = async (req: Request, res: Response, next: NextFunct
     const creator = parseInt(req.body.creator);
 
     if (!title || !description || Number.isNaN(creator) || !due) {
-      throw new Error("Not a valid section");
+      res.status(500).send("Not a valid section");
     }
 
     await query(

@@ -108,8 +108,17 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
 
       // Get Tasks and tasksTeams and append to element
       const tasks = await query(`SELECT * from tasks WHERE section_id = $1 `, [section.sectionId]);
-      // Create empty array in every task
+
+      // Create empty array in every task and replace Task Creator
       for (let i = 0; i < tasks.rows.length; i++) {
+        // Get Task Creator and replace it in element
+        const taskCreatorId = tasks.rows[i].taskCreator;
+        const taskCreator = await query(
+          "SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from users u WHERE user_id = $1",
+          [taskCreatorId],
+        );
+        tasks.rows[i].taskCreator = taskCreator.rows[0];
+        // Create empty array in every task
         tasks.rows[i].taskTeam = [];
       }
       const tasksTeams = await query(

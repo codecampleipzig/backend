@@ -49,11 +49,11 @@ VALUES
 INSERT INTO tasks (project_id, section_id, task_title, task_description, task_status, task_creator)
 VALUES 
 (1, 1, 'Get Djs', 'ask Mariana and Lena to dj', 'open', 1),
-(1, 1, 'Order Champagne', 'make everyone happy. and ask Lena where to find the best Champagen in town', 'closed', 12),
+(1, 1, 'Order Champagne', 'make everyone happy. and ask Lena where to find the best Champagen in town', 'done', 12),
 (1, 1, 'Buy a lot of Burger', 'Make everyone very happy. buy the best burger in town, but ask Gabe where to find them, because he knows', 'open', 7),
-(2, 3, 'Book the flight', 'look or the cheapest flights', 'delete', '9'),
+(2, 3, 'Book the flight', 'look or the cheapest flights', 'deleted', '9'),
 (2, 3, 'Plan food', 'go through the most delicios receipts and look at all the picture and be excited for the food', 'open', 11),
-(4, 5, 'Find location for music classes', 'Contact facilities around town that might be willing to share their free space', 'closed', 1),
+(4, 5, 'Find location for music classes', 'Contact facilities around town that might be willing to share their free space', 'done', 1),
 (4, 5, 'Organize around getting instruments', 'Ask people for donations of their once-loved but no-longer-used musical instruments', 'open', 5),
 (4, 5, 'Help organize an outing to a local concert or performance', 'Check local listings to find performances appropriate for kids.','open', 3),
 (5, 6, 'Contact local food bank', 'Gather necessary information and materials to have a food drive.', 'open', 2),
