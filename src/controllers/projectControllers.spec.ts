@@ -1,11 +1,12 @@
+import { mocked } from 'ts-jest/utils'
 import { query } from "../db";
 import { getProjects } from "./projectControllers";
+import { QueryResult } from 'pg';
 
 // info: if you want to run _just_ the tests in this file, you can call:
 // $ npm run test:unit -t 'projectControllers'
-
 jest.mock("../db");
-const mockedQuery: jest.Mock = query as any;
+const mockedQuery = mocked(query, true);
 
 describe("projectControllers", () => {
   it("should handle multiple search terms", async () => {
@@ -45,7 +46,7 @@ describe("projectControllers", () => {
   it("should handle valid search", async () => {
     // arrange
     const mockedProject = { projectId: 1, projectTitle: "mocked-project" };
-    mockedQuery.mockResolvedValueOnce({ rows: [mockedProject] });
+    mockedQuery.mockResolvedValueOnce({ rows: [mockedProject] } as QueryResult<any>);
     const mockedReq = { query: { searchTerm: "test" } };
     const mockedRes = {
       send: jest.fn().mockReturnThis(),
