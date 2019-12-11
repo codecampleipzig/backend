@@ -10,7 +10,8 @@
     "paths": {
       "*": ["node_modules/*"],
       "src/*": ["./*"]
-    }
+    },
+    "typeRoots": ["node_modules/@types"],
   },
   "include": ["src/**/*"]
 }

@@ -1,4 +1,3 @@
-import { mocked } from 'ts-jest/utils'
 import { query } from "../db";
 import { getProjects } from "./projectControllers";
 import { QueryResult } from 'pg';
