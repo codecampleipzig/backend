@@ -5,8 +5,9 @@ import { QueryResult } from 'pg';
 
 // info: if you want to run _just_ the tests in this file, you can call:
 // $ npm run test:unit -t 'projectControllers'
+
 jest.mock("../db");
-const mockedQuery = mocked(query, true);
+const mockedQuery = query as unknown as jest.MockInstance<any, any[]>;
 
 describe("projectControllers", () => {
   it("should handle multiple search terms", async () => {
