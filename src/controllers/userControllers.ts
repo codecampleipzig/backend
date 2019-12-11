@@ -122,9 +122,9 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 
   const dbUser = dbUserCheck.rows[0];
 
-  // If not found, return message, status 404 (Not a good practice, but leave it for now)
+  // If not found, return message, status 403 (Not a good practice, but leave it for now)
   if (!dbUser) {
-    return res.status(404).send({ message: "Incorrect credentials, please try again." })
+    return res.status(403).send({ message: "Incorrect credentials, please try again." })
   }
 
   // If found, check for password match

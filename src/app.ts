@@ -104,7 +104,7 @@ export const getApp = async () => {
    * Login user
    */
   app.post("/api/login", loginUser);
-  
+
   app.get("/api/user/:userId", protectedRoute, privateToUser, getUser);
   app.put("/api/user/:userId", protectedRoute, privateToUser, editUser);
   app.delete("/api/user/:userId", protectedRoute, privateToUser, deleteUser);
