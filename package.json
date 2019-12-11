@@ -8,10 +8,11 @@
     "start": "NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js .",
     "start:dev": "node -r dotenv/config -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
     "dev": "nodemon",
-    "test:unit": "jest",
+    "test:unit": "jest --run-in-band",
     "test:lint": "eslint --ext .ts ./src",
     "test:lint:fix": "npm run test:lint -- --fix",
-    "test": "npm run test:lint && npm run test:unit"
+    "test": "npm run test:unit",
+    "compodoc": "compodoc -p tsconfig.json --coverageTest 70 --coverageMinimumPerFile 20 --coverageTestThresholdFail false --coverageTestShowOnlyFailed"
   },
   "nodemonConfig": {
     "ignore": [
@@ -37,20 +38,25 @@
   },
   "homepage": "https://github.com/codecampleipzig/backend#readme",
   "dependencies": {
+    "@types/bcrypt": "^3.0.0",
     "@types/pg": "^7.11.2",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^7.14.0",
     "pg-camelcase": "0.0.3",
     "tsconfig-paths": "^3.9.0"
   },
   "devDependencies": {
+    "@compodoc/compodoc": "^1.1.11",
     "@types/body-parser": "^1.17.1",
     "@types/cors": "^2.8.6",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.2",
     "@types/jest": "^24.0.23",
+    "@types/jsonwebtoken": "^8.3.5",
     "@types/node": "^12.12.11",
     "@types/supertest": "^2.0.8",
     "@typescript-eslint/eslint-plugin": "^2.6.1",

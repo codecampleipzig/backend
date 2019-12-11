@@ -94,7 +94,7 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
     project.rows[0].projectTeam = projectTeam.rows;
 
     // Get Sections and add to project object
-    const sections = await query(`SELECT * FROM sections WHERE project_id = $1`, [req.params.projectId]);
+    const sections = await query(`SELECT * FROM sections WHERE project_id = $1 ORDER BY section_init_date DESC`, [req.params.projectId]);
     project.rows[0].projectSections = [];
 
     for (const section of sections.rows) {
@@ -115,6 +115,14 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
       );
       // Create empty array in every task
       for (let i = 0; i < tasks.rows.length; i++) {
+        // Get Task Creator and replace it in element
+        const taskCreatorId = tasks.rows[i].taskCreator;
+        const taskCreator = await query(
+          "SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from users u WHERE user_id = $1",
+          [taskCreatorId],
+        );
+        tasks.rows[i].taskCreator = taskCreator.rows[0];
+        // Create empty array in every task
         tasks.rows[i].taskTeam = [];
       }
       const tasksTeams = await query(
@@ -153,11 +161,11 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
     const body = req.body;
     const title = body.projectTitle;
     const description = body.projectDescription;
-    const imageURL = body.projectImageURL;
+    const imageUrl = body.projectImageUrl;
     const goal = body.projectGoal;
     const creator = parseInt(body.projectCreator);
 
-    if (!title || !description || !imageURL || !goal || Number.isNaN(creator)) {
+    if (!title || !description || !imageUrl || !goal || Number.isNaN(creator)) {
       throw new Error("Not a valid project");
     }
 
@@ -166,7 +174,7 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
     await query(
       `INSERT INTO projects(project_title, project_description, project_image_url, project_goal, project_creator) 
       VALUES($1, $2, $3, $4, $5) RETURNING *`,
-      [title, description, imageURL, goal, creator],
+      [title, description, imageUrl, goal, creator],
     );
     res.status(201).send({ status: "ok" });
   } catch (error) {

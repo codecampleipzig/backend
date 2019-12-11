@@ -8,11 +8,24 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
+      "program": "${workspaceFolder}/app.js",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program - Express Debugger",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "program": "${workspaceFolder}\\src\\controllers\\projectControllers.ts",
+      // "program": "${workspaceFolder}\\src\\controllers\\userControllers.ts",
+      "program": "${workspaceFolder}\\src\\index.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
+      // "preLaunchTask": "typescript",
+      "protocol": "inspector",
+      "cwd": "${workspaceFolder}",
       "outFiles": [
         "${workspaceFolder}/build/**/*.js"
       ]
