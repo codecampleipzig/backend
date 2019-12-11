@@ -88,7 +88,7 @@ export const getApp = async () => {
     .route("/api/project/:projectId/section")
     .post(createSection, getProject)
 
-  app.post("/api/project/:projectId/task", protectedRoute, createTask); // test with insomnia works
+  app.post("/api/project/:projectId/task", protectedRoute, createTask, getProject); // test with insomnia works
   app.route("/api/task/:taskId").patch(protectedRoute, updateTask, getProject);
   app
     .route("/api/taskTeam/:taskId/member/:userId")

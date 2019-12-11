@@ -26,18 +26,18 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
     const description = body.taskDescription;
     const status = body.taskStatus;
     const creator = parseInt(body.taskCreator);
-    const menuSection = body.menuSection;
+    const sectionId = body.sectionId;
 
-    if (!title || !description || !status || Number.isNaN(creator) || !menuSection) {
+    if (!title || !description || !status || Number.isNaN(creator) || !sectionId) {
       throw new Error("Not a valid task");
     }
 
     await query(
-      `INSERT INTO tasks(project_id, task_title, task_description, task_status, task_creator, menu_section) 
+      `INSERT INTO tasks(project_id, task_title, task_description, task_status, task_creator, section_id) 
       VALUES($1, $2, $3, $4, $5, $6)`,
-      [projectId, title, description, status, creator, menuSection],
+      [projectId, title, description, status, creator, sectionId],
     );
-    res.status(201).send({ status: "ok" });
+    next();
   } catch (error) {
     next(error);
   }
