@@ -87,7 +87,8 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
     const projectTeam = await query(
       `SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from user_project up 
       JOIN users u ON up.user_id = u.user_id
-      WHERE up.project_id = $1`,
+      WHERE up.project_id = $1
+      ORDER BY up.user_join_date asc`,
       [req.params.projectId],
     );
     project.rows[0].projectTeam = projectTeam.rows;
@@ -129,7 +130,7 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
         JOIN user_task ut ON t.task_id = ut.task_id
         JOIN users u ON u.user_id = ut.user_id
         WHERE section_id = $1
-        ORDER BY "TimeStamp" `,
+        ORDER BY ut.user_join_date asc`,
         [section.sectionId],
       );
       // Loop through tasks and put every user by task into element
@@ -197,7 +198,8 @@ export const getUserProjects = async (req: Request, res: Response, next: NextFun
       `SELECT projects.project_id, project_title, project_description, project_image_url, project_goal, project_creator, project_status FROM projects
     WHERE EXISTS
       (SELECT * from user_project
-        WHERE project_id = projects.project_id AND user_id = $1)`,
+        WHERE project_id = projects.project_id AND user_id = $1
+        ORDER BY user_join_date asc) `,
       [id],
     );
     res.send({ projects: dbResponse.rows });
