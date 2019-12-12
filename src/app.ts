@@ -17,6 +17,7 @@ import { getUser, registerUser, loginUser, editUser, deleteUser } from "./contro
 import { createTask, addTaskMember, deleteTaskMember, updateTask } from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 import { createSection } from "./controllers/sectionControllers";
+import { getGeneratedPutUrl } from "./controllers/uploadControllers";
 
 export const getApp = async () => {
   const app = express();
@@ -71,6 +72,8 @@ export const getApp = async () => {
   app.get("/api/test", (_, res) => {
     res.json({ ok: true });
   });
+
+  app.get('/api/generate-put-url', getGeneratedPutUrl);
 
   app.get("/api/projects", getProjects); // for searchbar
   app.get("/api/project/:projectId", getProject);
