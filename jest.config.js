@@ -8,4 +8,5 @@ module.exports = {
       lines: 30,
     },
   },
+  testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/build/"],
 };
