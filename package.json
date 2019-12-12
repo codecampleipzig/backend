@@ -12,7 +12,7 @@
     "test:coverage": "jest --coverage",
     "test:lint": "eslint --ext .ts ./src",
     "test:lint:fix": "npm run test:lint -- --fix",
-    "test": "npm run test:unit && npm test:coverage",
+    "test": "npm run test:unit && npm run test:coverage",
     "compodoc": "compodoc -p tsconfig.json --coverageTest 70 --coverageMinimumPerFile 20 --coverageTestThresholdFail false --coverageTestShowOnlyFailed"
   },
   "husky": {
@@ -26,7 +26,7 @@
       "git add"
     ],
     "*.ts": [
-      "compodoc --coverageTest 70 --coverageMinimumPerFile 20 --coverageTestThresholdFail false --coverageTestShowOnlyFailed"
+      "compodoc -p tsconfig.json --coverageTest 70 --coverageMinimumPerFile 20 --coverageTestThresholdFail false --coverageTestShowOnlyFailed"
     ]
   },
   "nodemonConfig": {
