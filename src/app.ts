@@ -17,6 +17,7 @@ import { getUser, registerUser, loginUser, editUser, deleteUser } from "./contro
 import { createTask, addTaskMember, deleteTaskMember, updateTask } from "./controllers/taskControllers";
 import { setupDatabase } from "./migrations";
 import { createSection } from "./controllers/sectionControllers";
+import { getGeneratedPutUrl } from "./controllers/uploadControllers";
 
 export const getApp = async () => {
   const app = express();
@@ -49,8 +50,8 @@ export const getApp = async () => {
       // Set user object in request
       req["user"] = user;
       next();
-    })
-  }
+    });
+  };
 
   /**
    * Set middleware - privateToUser to be added on to protectedRoute and requires :userId to be part of req.params
@@ -60,14 +61,13 @@ export const getApp = async () => {
    */
   const privateToUser = (req: Request, res: Response, next: NextFunction) => {
     const routeUserId = req.params.userId;
-    const authUserId = req['user'] && req['user'].userId;
+    const authUserId = req["user"] && req["user"].userId;
     if (authUserId && routeUserId == authUserId) {
       return next();
-    }
-    else {
+    } else {
       res.send(403);
     }
-  }
+  };
 
   app.get("/api/test", (_, res) => {
     res.json({ ok: true });
@@ -78,6 +78,8 @@ export const getApp = async () => {
   app.post("/api/project", protectedRoute, createProject); // test with insomnia works
   app.get("/api/myprojects/:userId", protectedRoute, getUserProjects); // test with insomnia works
   app.get("/api/exploreprojects/:userId", protectedRoute, getExploreProjects); // test with insomnia works
+  app.get('/api/generate-put-url', getGeneratedPutUrl);
+
   app
     .route("/api/projectTeam/:projectId/member/:userId")
     .put(protectedRoute, privateToUser, addTeamMember, getProject)
@@ -96,8 +98,8 @@ export const getApp = async () => {
     .delete(protectedRoute, privateToUser, deleteTaskMember, getProject);
 
   /**
- * Register user
- */
+   * Register user
+   */
   app.post("/api/register", registerUser);
 
   /**

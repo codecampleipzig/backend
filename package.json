@@ -8,11 +8,26 @@
     "start": "NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js .",
     "start:dev": "node -r dotenv/config -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
     "dev": "nodemon",
-    "test:unit": "jest --run-in-band",
+    "test:unit": "jest --runInBand",
+    "test:coverage": "jest --runInBand --coverage",
     "test:lint": "eslint --ext .ts ./src",
     "test:lint:fix": "npm run test:lint -- --fix",
-    "test": "npm run test:unit",
+    "test": "npm run test:coverage",
     "compodoc": "compodoc -p tsconfig.json --coverageTest 70 --coverageMinimumPerFile 20 --coverageTestThresholdFail false --coverageTestShowOnlyFailed"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && npm test && npm run compodoc"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,json}": [
+      "prettier --write '**/*.{ts,json}'",
+      "git add"
+    ],
+    "*.ts": [
+      "compodoc -p tsconfig.json --coverageTest 70 --coverageMinimumPerFile 20 --coverageTestThresholdFail false --coverageTestShowOnlyFailed"
+    ]
   },
   "nodemonConfig": {
     "ignore": [
@@ -40,6 +55,7 @@
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
     "@types/pg": "^7.11.2",
+    "aws-sdk": "^2.588.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
