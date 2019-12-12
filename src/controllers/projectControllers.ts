@@ -164,7 +164,6 @@ export const createProject = async (req: Request, res: Response, next: NextFunct
     const goal = body.goal;
     const status = 'open';
     const creator = parseInt(body.creator);
-    console.log(body)
     if (!title || !imageUrl || !description  || !goal || !status || Number.isNaN(creator)) {
       res.status(500).send("Not a valid project");
     }
