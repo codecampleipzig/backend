@@ -116,8 +116,8 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
   const dbUserCheck: QueryResult<any> = await query(
     `SELECT * 
     FROM users 
-    WHERE user_email = $1`,
-    [email]
+    WHERE LOWER(user_email) = $1`,
+    [email.toLowerCase()]
   );
 
   const dbUser = dbUserCheck.rows[0];
