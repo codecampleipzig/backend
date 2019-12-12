@@ -73,20 +73,22 @@ export const getApp = async () => {
     res.json({ ok: true });
   });
 
+  app.get("/api/projects", protectedRoute, getProjects); // for searchbar
+  app.get("/api/project/:projectId", protectedRoute, getProject);
+  app.post("/api/project", protectedRoute, createProject); // test with insomnia works
+  app.get("/api/myprojects/:userId", protectedRoute, getUserProjects); // test with insomnia works
+  app.get("/api/exploreprojects/:userId", protectedRoute, getExploreProjects); // test with insomnia works
   app.get('/api/generate-put-url', getGeneratedPutUrl);
 
-  app.get("/api/projects", getProjects); // for searchbar
-  app.get("/api/project/:projectId", getProject);
-  app.post("/api/project", createProject); // test with insomnia works
-  app.get("/api/myprojects/:userId", getUserProjects); // test with insomnia works
-  app.get("/api/exploreprojects/:userId", getExploreProjects); // test with insomnia works
   app
     .route("/api/projectTeam/:projectId/member/:userId")
     .put(protectedRoute, privateToUser, addTeamMember, getProject)
     .delete(protectedRoute, privateToUser, deleteTeamMember, getProject);
 
   // TODO: should be protected
-  app.route("/api/project/:projectId/section").post(createSection, getProject);
+  app
+    .route("/api/project/:projectId/section")
+    .post(protectedRoute, createSection, getProject)
 
   app.post("/api/project/:projectId/task", protectedRoute, createTask, getProject); // test with insomnia works
   app.route("/api/task/:taskId").patch(protectedRoute, updateTask, getProject);

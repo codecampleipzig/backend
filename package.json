@@ -9,10 +9,10 @@
     "start:dev": "node -r dotenv/config -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
     "dev": "nodemon",
     "test:unit": "jest --runInBand",
-    "test:coverage": "jest --coverage",
+    "test:coverage": "jest --runInBand --coverage",
     "test:lint": "eslint --ext .ts ./src",
     "test:lint:fix": "npm run test:lint -- --fix",
-    "test": "npm run test:unit && npm run test:coverage",
+    "test": "npm run test:coverage",
     "compodoc": "compodoc -p tsconfig.json --coverageTest 70 --coverageMinimumPerFile 20 --coverageTestThresholdFail false --coverageTestShowOnlyFailed"
   },
   "husky": {
