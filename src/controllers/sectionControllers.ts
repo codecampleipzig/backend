@@ -4,7 +4,6 @@ import { QueryResult } from "pg";
 import { Project } from "src/datatypes/Project";
 
 export const createSection = async (req: Request, res: Response, next: NextFunction) => {
-
   try {
     const projectId = req.params.projectId;
     const { title, description, due } = req.body;
@@ -24,4 +23,4 @@ export const createSection = async (req: Request, res: Response, next: NextFunct
   } catch (error) {
     next(error);
   }
-}
+};

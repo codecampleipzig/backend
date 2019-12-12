@@ -44,20 +44,19 @@ export const getApp = async () => {
 
       req["user"] = user;
       next();
-    })
-  }
+    });
+  };
 
   // To be added on to protectedRoute and requires :userId to be part of req.params
   const privateToUser = (req: Request, res: Response, next: NextFunction) => {
     const routeUserId = req.params.userId;
-    const authUserId = req['user'] && req['user'].userId;
+    const authUserId = req["user"] && req["user"].userId;
     if (authUserId && routeUserId == authUserId) {
       return next();
-    }
-    else {
+    } else {
       res.send(403);
     }
-  }
+  };
 
   app.get("/api/test", (_, res) => {
     res.json({ ok: true });
@@ -74,9 +73,7 @@ export const getApp = async () => {
     .delete(protectedRoute, privateToUser, deleteTeamMember, getProject);
 
   // TODO: should be protected
-  app
-    .route("/api/project/:projectId/section")
-    .post(createSection, getProject)
+  app.route("/api/project/:projectId/section").post(createSection, getProject);
 
   app.post("/api/project/:projectId/task", protectedRoute, createTask); // test with insomnia works
   app.route("/api/task/:taskId").patch(protectedRoute, updateTask, getProject);
@@ -86,8 +83,8 @@ export const getApp = async () => {
     .delete(protectedRoute, privateToUser, deleteTaskMember, getProject);
 
   /**
- * Register user
- */
+   * Register user
+   */
   app.post("/api/register", registerUser);
 
   /**
