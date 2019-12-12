@@ -8,10 +8,11 @@
     "start": "NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js .",
     "start:dev": "node -r dotenv/config -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
     "dev": "nodemon",
-    "test:unit": "jest --run-in-band",
+    "test:unit": "jest --runInBand",
+    "test:coverage": "jest --coverage",
     "test:lint": "eslint --ext .ts ./src",
     "test:lint:fix": "npm run test:lint -- --fix",
-    "test": "npm run test:unit",
+    "test": "npm run test:unit && npm test:coverage",
     "compodoc": "compodoc -p tsconfig.json --coverageTest 70 --coverageMinimumPerFile 20 --coverageTestThresholdFail false --coverageTestShowOnlyFailed"
   },
   "husky": {
