@@ -28,7 +28,8 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Take user data from req.body
-    const { username, email, password } = req.body;
+    const { username, email, password, userImageUrl } = req.body;
+
     // Check for value in name, email and password - required fields validation
     if (!username || !email || !password) {
       return res.status(400).send({ message: "Username, email or password required." });
@@ -40,7 +41,6 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     const passwordRegex = RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&].{8,}");
 
     if (!usernameRegex.test(username)) {
-      console.log(username);
       return res.status(400).send({ message: `Username: ${username} must contain at least two characters, no number at the beginning and no whitespace around.` });
     }
 
@@ -73,9 +73,9 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 
     // Create user in DB
     const { rows } = await query(
-      `INSERT INTO users (user_name, user_email, password)
-      VALUES ($1, $2, $3) RETURNING *`,
-      [username, email, hashedPassword]
+      `INSERT INTO users (user_name, user_email, password, user_image_url)
+      VALUES ($1, $2, $3, $4) RETURNING *`,
+      [username, email, hashedPassword, userImageUrl]
     );
 
     const dbUser = rows[0];
