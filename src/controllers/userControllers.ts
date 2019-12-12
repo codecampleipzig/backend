@@ -82,7 +82,7 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 
     const user = mapToJwtUserModel(dbUser);
 
-    // Once user is created, return success and set access token 
+    // Once user is created, return success and set access token
     // Authorization
     const accessToken: string = jwt.sign(user, secret);
 
@@ -124,7 +124,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 
   // If not found, return message, status 403 (Not a good practice, but leave it for now)
   if (!dbUser) {
-    return res.status(403).send({ message: "Incorrect credentials, please try again." })
+    return res.status(403).send({ message: "Incorrect credentials, please try again." });
   }
 
   // If found, check for password match
@@ -133,9 +133,8 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
   // If entered password doesn't match, return 401 message
   if (!passwordMatch) {
     res.status(401).send({ message: "Incorrect credentials, please try again." });
-  }
-  else {
-    // If entered password matches, return success and set access token 
+  } else {
+    // If entered password matches, return success and set access token
     // Authorization
     const user = mapToJwtUserModel(dbUser);
 
@@ -146,14 +145,14 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       token: accessToken
     });
   }
-}
+};
 
 function mapToJwtUserModel(dbUser: any): User {
   const user: User = {
     userId: dbUser.userId,
     userName: dbUser.userName,
     userEmail: dbUser.userEmail,
-    userImageUrl: dbUser.userImageUrl
+    userImageUrl: dbUser.userImageUrl,
   };
 
   return user;
