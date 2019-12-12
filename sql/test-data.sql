@@ -63,7 +63,7 @@ VALUES
 (7, 8, 'Buy Christmas trees and distribute them to needy individuals', 'spread hope and joy by giving Christmas trees to families in need. We are just neighbors helping neighbors, building a little community and spreading good cheer in the process. Want to join the Santas?', 'open', 12),
 (7, 8, 'Hold a fundraiser.', 'Find bands willing to perform sing-alongs. Christmas caroling has never been this much fun!', 'open', 15),
 (8, 9, 'Form a planning committee for preliminary decisions', 'Identify and invite leaders within the community and other interested people to an organizational meeting and social gathering.', 'open', 1),
-(8, 9, 'Choose a name for the garden.', 'Create a prioritized budget and a wish list of desired donations and update it regularly', 'open', 5),
+(8, 9, 'Choose a name for the garden.', 'Create a prioritized budget and a wish list of desired donations and update it regularly', 'deleted', 5),
 (8, 9, 'Decide on the scope of garden including the size and the components', 'Make management decisions including whether there will be any restrictions on the use of pesticides and fertilizers. ', 'open', 13),
 (9, 10, 'Check in donors as they arrive at the drive.', 'Find bands willing to perform sing-alongs. Christmas caroling has never been this much fun!', 'open', 15),
 (10, 11, 'Ask businesses for their leftovers.', 'Try finding philanthropic restaurants and ask them if you can use their kitchen to prepare meals when they are closed', 'open', 7);

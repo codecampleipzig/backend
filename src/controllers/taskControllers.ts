@@ -43,21 +43,6 @@ export const createTask = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const getTaskTeam = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const taskId = req.params.taskId;
-    const dbResponse = await query(
-      `SELECT task.task_id, user.user_id, user.user_name, user.user_mail, user_image_url FROM users
-      JOIN task_user on task_user.user_id = user.user_id
-      JOIN task on task_user.task_id = $1`,
-      [taskId],
-    );
-    res.send({ tasks: dbResponse.rows });
-  } catch (error) {
-    next(error);
-  }
-};
-
 /**
  * updateTask's status with taskStatus is set in the body.
  */
