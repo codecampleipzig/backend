@@ -41,7 +41,6 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     const passwordRegex = RegExp("^(?=(.*[A-Za-z]){1,})(?=(.*[\\d]){1,})(?!.*\\s).{8,}$");
 
     if (!usernameRegex.test(username)) {
-      console.log(username);
       return res.status(400).send({ message: `Username: ${username} must contain at least two characters, no number at the beginning and no whitespace around.` });
     }
 
@@ -51,8 +50,7 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     }
 
     if (!passwordRegex.test(password)) {
-      console.log(`Password: ${password} does not match the password regex ${passwordRegex}`);
-      return res.status(400).send({ message: "Your password must be at least 9 characters and must have an uppercase, a lowercase and a number." })
+      return res.status(400).send({ message: "Your password must be at least 8 characters and contain at least one number." })
     }
 
     // TODO: Don't we have to have Confirm Password field on Register form?
@@ -62,11 +60,11 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     const dbUserCheck: QueryResult<any> = await query(
       `SELECT * 
       FROM users 
-      WHERE user_email = $1`,
-      [email]);
+      WHERE LOWER(user_email) = $1 OR user_name = $2`,
+      [email.toLowerCase(), username]);
 
     if (dbUserCheck.rows[0]) {
-      return res.status(400).send({ message: "Registration not successful." })
+      return res.status(400).send({ message: "Registration not successful. You may already have an account!" })
     }
 
     // Once registration data checks pass, hash password
@@ -90,7 +88,7 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     // Return success response
     return res.send({
       user,
-      message: "User registered successfully",
+      message: "You have registered successfully!",
       token: accessToken
     })
   }
@@ -143,7 +141,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
     const accessToken: string = jwt.sign(user, secret);
     res.send({
       user,
-      message: "User logged in successfully.",
+      message: "You have logged in successfully!",
       token: accessToken
     });
   }

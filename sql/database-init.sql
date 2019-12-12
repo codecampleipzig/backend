@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS users (
   user_id serial NOT NULL PRIMARY KEY,
   user_name varchar NOT NULL UNIQUE,
-  user_email varchar NOT NULL,
+  user_email varchar NOT NULL UNIQUE,
   password varchar NOT NULL,
   user_image_url varchar,
   join_date timestamp NOT NULL DEFAULT NOW(),
