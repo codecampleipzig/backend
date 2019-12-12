@@ -87,7 +87,8 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
     const projectTeam = await query(
       `SELECT u.user_id, u.user_name, u.user_email, u.user_image_url from user_project up 
       JOIN users u ON up.user_id = u.user_id
-      WHERE up.project_id = $1`,
+      WHERE up.project_id = $1
+      ORDER BY up.user_join_date asc`,
       [req.params.projectId],
     );
     project.rows[0].projectTeam = projectTeam.rows;
@@ -96,8 +97,7 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
     const sections = await query(`SELECT * FROM sections WHERE project_id = $1 ORDER BY section_init_date DESC`, [req.params.projectId]);
     project.rows[0].projectSections = [];
 
-    for (let section of sections.rows) {
-
+    for (const section of sections.rows) {
       // Get Section Creator and replace it in element
       const sectionCreatorId = section.sectionCreator;
       const sectionCreator = await query(
@@ -107,9 +107,13 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
       section.sectionCreator = sectionCreator.rows[0];
 
       // Get Tasks and tasksTeams and append to element
-      const tasks = await query(`SELECT * from tasks WHERE section_id = $1 `, [section.sectionId]);
-
-      // Create empty array in every task and replace Task Creator
+      const tasks = await query(
+        `SELECT * from tasks 
+        WHERE section_id = $1 
+        ORDER BY task_status DESC`,
+        [section.sectionId],
+      );
+      // Create empty array in every task
       for (let i = 0; i < tasks.rows.length; i++) {
         // Get Task Creator and replace it in element
         const taskCreatorId = tasks.rows[i].taskCreator;
@@ -125,7 +129,8 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
         `SELECT t.task_id, u.user_id, u.user_name, u.user_email, u.user_image_url from tasks t
         JOIN user_task ut ON t.task_id = ut.task_id
         JOIN users u ON u.user_id = ut.user_id
-        WHERE section_id = $1`,
+        WHERE section_id = $1
+        ORDER BY ut.user_join_date asc`,
         [section.sectionId],
       );
       // Loop through tasks and put every user by task into element
@@ -138,7 +143,6 @@ export const getProject = async (req: Request, res: Response, next: NextFunction
 
       // Put element into projectSections
       project.rows[0].projectSections.push(section);
-
     }
 
     if (project.rows.length == 1) {
@@ -194,7 +198,8 @@ export const getUserProjects = async (req: Request, res: Response, next: NextFun
       `SELECT projects.project_id, project_title, project_description, project_image_url, project_goal, project_creator, project_status FROM projects
     WHERE EXISTS
       (SELECT * from user_project
-        WHERE project_id = projects.project_id AND user_id = $1)`,
+        WHERE project_id = projects.project_id AND user_id = $1
+        ORDER BY user_join_date asc) `,
       [id],
     );
     res.send({ projects: dbResponse.rows });
