@@ -37,7 +37,8 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
     // TODO: Check for expected value in name, email and password - valid data format
     const usernameRegex = RegExp("^[^\\d\\s](\\S+ ){0,1}\\S+$");
     const emailRegex = RegExp("^(([^<>()\\[\\]\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$");
-    const passwordRegex = RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&].{8,}");
+    // Old password validator: "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-zd$@$!%*?&].{8,}"
+    const passwordRegex = RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[A-Za-z].{8,}");
 
     if (!usernameRegex.test(username)) {
       console.log(username);
@@ -51,7 +52,7 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 
     if (!passwordRegex.test(password)) {
       console.log(`Password: ${password} does not match the password regex ${passwordRegex}`);
-      return res.status(400).send({ message: "Password must contain an uppercase, a lowercase, a special character and a number." })
+      return res.status(400).send({ message: "Your password must be at least 8 characters and must have an uppercase, a lowercase and a number." })
     }
 
     // TODO: Don't we have to have Confirm Password field on Register form?
