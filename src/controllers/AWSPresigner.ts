@@ -3,7 +3,6 @@
  * https://gist.github.com/DiegoRodriguez2018/9bd139cddf0570bfd06de965337ceabe
  */
 
-require('dotenv').config(); // Loading dotenv to have access to env variables
 const AWS = require('aws-sdk'); // Requiring AWS SDK.
 import { awsAccessKeyId, awsSecretAccessKey, awsBucket, awsRegion } from "../configuration";
 
